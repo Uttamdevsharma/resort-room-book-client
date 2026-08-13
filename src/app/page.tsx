@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
 import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { facilitiesApi, Facility } from "@/lib/api/facilities";
 import { reviewsApi, Review } from "@/lib/api/reviews";
@@ -22,14 +21,48 @@ const fallbackFacilities: Array<{ id?: string; name: string; description: string
   { name: "Fitness Center", description: "24/7 high-end gym equipment with personal trainers on demand." },
 ];
 
+const skeletonRoomCount = 3;
+
+function RoomCardSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm" aria-hidden="true">
+      <div className="relative h-56 w-full overflow-hidden bg-muted">
+        <div className="skeleton-shimmer absolute inset-0 bg-muted" />
+        <div className="skeleton-shimmer absolute right-3 top-3 h-7 w-28 rounded-full bg-muted" />
+      </div>
+
+      <div className="flex flex-1 flex-col justify-between space-y-4 p-6">
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <span className="skeleton-shimmer block h-3 w-20 rounded bg-muted" />
+            <span className="skeleton-shimmer block h-3 w-14 rounded bg-muted" />
+          </div>
+          <span className="skeleton-shimmer mt-2 block h-5 w-3/4 rounded bg-muted" />
+          <span className="skeleton-shimmer mt-2 block h-3 w-full rounded bg-muted" />
+          <span className="skeleton-shimmer mt-1.5 block h-3 w-2/3 rounded bg-muted" />
+        </div>
+
+        <div className="flex items-center justify-between border-t border-border pt-4">
+          <span className="skeleton-shimmer block h-3 w-32 rounded bg-muted" />
+          <span className="skeleton-shimmer block h-9 w-24 rounded-full bg-muted" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [roomsLoading, setRoomsLoading] = useState(true);
+  const [roomsError, setRoomsError] = useState(false);
+  const loadHomeDataRef = useRef<() => Promise<void> | undefined>(undefined);
 
   useEffect(() => {
-    async function loadHomeData() {
+    let cancelled = false;
+
+    const loadHomeData = async () => {
       try {
         const [roomsRes, facilitiesRes, reviewsRes] = await Promise.allSettled([
           roomTypesApi.list({ limit: 6, status: "ACTIVE" }),
@@ -37,8 +70,12 @@ export default function HomePage() {
           reviewsApi.listPublicReviews({ limit: 4 }),
         ]);
 
-        if (roomsRes.status === "fulfilled" && roomsRes.value.data) {
-          setRoomTypes(roomsRes.value.data);
+        if (cancelled) return;
+
+        if (roomsRes.status === "fulfilled") {
+          setRoomTypes(roomsRes.value.data ?? []);
+        } else {
+          setRoomsError(true);
         }
         if (facilitiesRes.status === "fulfilled" && facilitiesRes.value.data) {
           setFacilities(facilitiesRes.value.data);
@@ -48,12 +85,25 @@ export default function HomePage() {
         }
       } catch (err) {
         console.error("Error loading home page data", err);
+        if (!cancelled) setRoomsError(true);
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setRoomsLoading(false);
       }
-    }
+    };
+
+    loadHomeDataRef.current = loadHomeData;
     loadHomeData();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const retryRooms = () => {
+    setRoomsError(false);
+    setRoomsLoading(true);
+    loadHomeDataRef.current?.();
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -146,14 +196,28 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {isLoading ? (
-            <Loading text="Loading luxury rooms..." />
+          {roomsLoading ? (
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <span className="sr-only" role="status" aria-live="polite">
+                Loading rooms...
+              </span>
+              {Array.from({ length: skeletonRoomCount }, (_, i) => (
+                <RoomCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : roomsError ? (
+            <div className="rounded-2xl border border-border bg-card py-12 text-center">
+              <p className="text-muted-foreground">Unable to load rooms right now.</p>
+              <Button variant="outline" className="mt-4 gap-2 rounded-full px-6" onClick={retryRooms}>
+                Try Again
+              </Button>
+            </div>
           ) : roomTypes.length === 0 ? (
             <div className="rounded-2xl border border-border bg-card py-12 text-center">
               <p className="text-muted-foreground">No rooms available currently.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid animate-fade-in grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {roomTypes.slice(0, 6).map((room) => {
                 const mediaUrl = room.media?.[0]?.url || "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80";
                 return (
