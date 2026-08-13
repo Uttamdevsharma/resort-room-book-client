@@ -8,10 +8,123 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
 import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { useAuth } from "@/lib/context/AuthContext";
 import { Calendar, Users, BedDouble, CheckCircle2, ShieldCheck, ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+
+function SkeletonBlock({ className = "" }: { className?: string }) {
+  return <div className={`skeleton-shimmer bg-muted ${className}`} aria-hidden="true" />;
+}
+
+function RoomDetailSkeleton() {
+  return (
+    <>
+      <div className="pt-24 pb-6 bg-muted/20 border-b border-border">
+        <div className="container">
+          <SkeletonBlock className="mb-4 h-3.5 w-40 rounded-full" />
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-3">
+              <SkeletonBlock className="h-6 w-24 rounded-full" />
+              <SkeletonBlock className="h-9 sm:h-10 w-64 sm:w-96 max-w-full rounded-lg" />
+            </div>
+            <div className="space-y-2 md:text-right">
+              <SkeletonBlock className="h-8 w-28 rounded-lg md:ml-auto" />
+              <SkeletonBlock className="h-3 w-16 rounded-full md:ml-auto" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <main className="flex-1 pt-12 pb-24 min-h-[38rem] sm:min-h-[42rem]">
+        <div className="container grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-10">
+            <div className="space-y-4">
+              <SkeletonBlock className="h-80 sm:h-96 w-full rounded-2xl" />
+              <div className="flex items-center gap-3 overflow-hidden">
+                {[0, 1, 2, 3].map((i) => (
+                  <SkeletonBlock key={i} className="h-20 w-28 flex-shrink-0 rounded-xl" />
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 rounded-2xl bg-card border border-border shadow-xs">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="space-y-2">
+                  <SkeletonBlock className="h-3 w-20 rounded-full" />
+                  <SkeletonBlock className="h-6 w-24 rounded-md" />
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-4">
+              <SkeletonBlock className="h-7 w-48 rounded-lg" />
+              <div className="space-y-2.5">
+                <SkeletonBlock className="h-4 w-full rounded-full" />
+                <SkeletonBlock className="h-4 w-11/12 rounded-full" />
+                <SkeletonBlock className="h-4 w-5/6 rounded-full" />
+                <SkeletonBlock className="h-4 w-2/3 rounded-full" />
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-border">
+              <SkeletonBlock className="h-7 w-52 rounded-lg" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[0, 1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-card border border-border"
+                  >
+                    <SkeletonBlock className="h-8 w-8 rounded-lg" />
+                    <div className="flex-1 space-y-1.5">
+                      <SkeletonBlock className="h-4 w-32 rounded-full" />
+                      <SkeletonBlock className="h-3 w-40 rounded-full" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 p-6 rounded-2xl bg-card border border-border shadow-xl space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-border">
+                <div className="space-y-1.5">
+                  <SkeletonBlock className="h-8 w-24 rounded-lg" />
+                  <SkeletonBlock className="h-3 w-16 rounded-full" />
+                </div>
+                <SkeletonBlock className="h-7 w-32 rounded-full" />
+              </div>
+
+              <div className="space-y-4">
+                {[0, 1].map((i) => (
+                  <div key={i} className="space-y-1.5">
+                    <SkeletonBlock className="h-3 w-24 rounded-full" />
+                    <SkeletonBlock className="h-10 w-full rounded-lg" />
+                  </div>
+                ))}
+                <div className="grid grid-cols-2 gap-3">
+                  {[0, 1].map((i) => (
+                    <div key={i} className="space-y-1.5">
+                      <SkeletonBlock className="h-3 w-16 rounded-full" />
+                      <SkeletonBlock className="h-10 w-full rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+                <div className="p-4 rounded-xl bg-muted/40 space-y-3">
+                  <SkeletonBlock className="h-4 w-full rounded-full" />
+                  <SkeletonBlock className="h-4 w-full rounded-full" />
+                  <SkeletonBlock className="h-5 w-2/3 rounded-full" />
+                </div>
+                <SkeletonBlock className="h-12 w-full rounded-xl" />
+                <SkeletonBlock className="mx-auto h-4 w-56 rounded-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}
 
 export default function RoomDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -51,9 +164,7 @@ export default function RoomDetailPage({ params }: { params: Promise<{ id: strin
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <Loading size="lg" text="Loading room details..." />
-        </div>
+        <RoomDetailSkeleton />
         <Footer />
       </div>
     );
@@ -127,7 +238,7 @@ export default function RoomDetailPage({ params }: { params: Promise<{ id: strin
         </div>
       </div>
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 pt-12 pb-24">
         <div className="container grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Left Column: Media Gallery & Details */}
           <div className="lg:col-span-2 space-y-10">

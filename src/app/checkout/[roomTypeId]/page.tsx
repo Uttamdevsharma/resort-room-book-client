@@ -10,7 +10,7 @@ import { paymentsApi } from "@/lib/api/payments";
 import { useAuth } from "@/lib/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
+import { CheckoutSkeleton } from "@/components/checkout/CheckoutSkeleton";
 import { AlertCircle, CheckCircle2, Ticket, CreditCard, ShieldCheck, ArrowLeft } from "lucide-react";
 
 function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
@@ -147,7 +147,7 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
   };
 
   if (isLoading) {
-    return <Loading text="Preparing your reservation..." />;
+    return <CheckoutSkeleton />;
   }
 
   if (!room) {
@@ -363,7 +363,7 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
 export default function BookingCreationPage({ params }: { params: Promise<{ roomTypeId: string }> }) {
   const resolvedParams = use(params);
   return (
-    <Suspense fallback={<Loading text="Loading..." />}>
+    <Suspense fallback={<CheckoutSkeleton />}>
       <BookingCreationContent roomTypeId={resolvedParams.roomTypeId} />
     </Suspense>
   );

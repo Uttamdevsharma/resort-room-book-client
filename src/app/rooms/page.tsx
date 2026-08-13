@@ -348,9 +348,9 @@ function RoomsContent() {
         />
       </RoomsHero>
 
-      <main className="flex-1 py-10 sm:py-12">
+      <main className="flex-1 pt-10 pb-20 sm:pt-12 sm:pb-24">
         <div className="container">
-          <div className="min-h-[24rem] sm:min-h-[28rem]">
+          <div className="min-h-[28rem] sm:min-h-[32rem]">
             {isLoading ? (
               <>
                 <span className="sr-only" role="status" aria-live="polite">
@@ -363,7 +363,7 @@ function RoomsContent() {
                 </div>
               </>
             ) : hasError ? (
-              <div className="flex min-h-[24rem] items-center justify-center sm:min-h-[28rem]">
+              <div className="flex min-h-[28rem] items-center justify-center sm:min-h-[32rem]">
                 <div
                   className="mx-auto w-full max-w-md rounded-2xl border border-border bg-card px-6 py-12 text-center shadow-sm sm:py-14"
                   role="alert"
@@ -388,7 +388,7 @@ function RoomsContent() {
                 </div>
               </div>
             ) : roomTypes.length === 0 ? (
-              <div className="flex min-h-[24rem] items-center justify-center sm:min-h-[28rem]">
+              <div className="flex min-h-[28rem] items-center justify-center sm:min-h-[32rem]">
                 <div
                   className="mx-auto w-full max-w-md rounded-2xl border border-dashed border-border bg-card px-6 py-12 text-center shadow-sm sm:py-14"
                   role="status"
@@ -498,9 +498,9 @@ function RoomsFallback() {
         <SkeletonFilterBar />
       </RoomsHero>
 
-      <main className="flex-1 py-10 sm:py-12">
+      <main className="flex-1 pt-10 pb-20 sm:pt-12 sm:pb-24">
         <div className="container">
-          <div className="min-h-[24rem] sm:min-h-[28rem]">
+          <div className="min-h-[28rem] sm:min-h-[32rem]">
             <span className="sr-only" role="status" aria-live="polite">
               Loading available rooms...
             </span>
