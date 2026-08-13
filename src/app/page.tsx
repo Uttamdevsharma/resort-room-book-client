@@ -7,10 +7,11 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { AboutSection, FacilityDirectory, GallerySection } from "@/components/home";
 import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { facilitiesApi, Facility } from "@/lib/api/facilities";
 import { reviewsApi, Review } from "@/lib/api/reviews";
-import { Users, Star, ArrowRight, Sparkles, Palmtree, Waves, UtensilsCrossed, Dumbbell, Flower2, Car, Wifi, Quote, BedDouble, MapPin } from "lucide-react";
+import { Users, Star, ArrowRight, Sparkles, Palmtree, Waves, UtensilsCrossed, Dumbbell, Flower2, Car, Wifi, Quote, BedDouble } from "lucide-react";
 
 const facilityIcons = [Palmtree, Waves, UtensilsCrossed, Dumbbell, Flower2, Car, Wifi, Sparkles];
 
@@ -57,6 +58,8 @@ export default function HomePage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [roomsLoading, setRoomsLoading] = useState(true);
   const [roomsError, setRoomsError] = useState(false);
+  const [facilitiesLoading, setFacilitiesLoading] = useState(true);
+  const [facilitiesError, setFacilitiesError] = useState(false);
   const loadHomeDataRef = useRef<() => Promise<void> | undefined>(undefined);
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export default function HomePage() {
       try {
         const [roomsRes, facilitiesRes, reviewsRes] = await Promise.allSettled([
           roomTypesApi.list({ limit: 6, status: "ACTIVE" }),
-          facilitiesApi.list(),
+          facilitiesApi.listPublic(),
           reviewsApi.listPublicReviews({ limit: 4 }),
         ]);
 
@@ -79,15 +82,23 @@ export default function HomePage() {
         }
         if (facilitiesRes.status === "fulfilled" && facilitiesRes.value.data) {
           setFacilities(facilitiesRes.value.data);
+        } else {
+          setFacilitiesError(true);
         }
         if (reviewsRes.status === "fulfilled" && reviewsRes.value.data) {
           setReviews(reviewsRes.value.data);
         }
       } catch (err) {
         console.error("Error loading home page data", err);
-        if (!cancelled) setRoomsError(true);
+        if (!cancelled) {
+          setRoomsError(true);
+          setFacilitiesError(true);
+        }
       } finally {
-        if (!cancelled) setRoomsLoading(false);
+        if (!cancelled) {
+          setRoomsLoading(false);
+          setFacilitiesLoading(false);
+        }
       }
     };
 
@@ -102,6 +113,12 @@ export default function HomePage() {
   const retryRooms = () => {
     setRoomsError(false);
     setRoomsLoading(true);
+    loadHomeDataRef.current?.();
+  };
+
+  const retryFacilities = () => {
+    setFacilitiesError(false);
+    setFacilitiesLoading(true);
     loadHomeDataRef.current?.();
   };
 
@@ -172,6 +189,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ============ About ============ */}
+      <AboutSection />
 
       {/* ============ Featured Rooms ============ */}
       <section id="rooms" className="py-20 bg-muted/30 lg:py-28 scroll-mt-16">
@@ -358,30 +378,16 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ============ CTA Banner ============ */}
-      <section className="relative overflow-hidden bg-gradient-to-r from-navy-900 via-blue-700 to-primary py-20 lg:py-24">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.12),transparent_55%)]" />
-        <div className="container relative z-10 mx-auto max-w-3xl space-y-6 text-center">
-          <MapPin className="mx-auto h-8 w-8 text-blue-200" />
-          <h2 className="font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">
-            Ready for your next unhurried getaway?
-          </h2>
-          <p className="mx-auto max-w-2xl text-blue-100">
-            Book directly with us today and enjoy exclusive member discounts, zero booking fees, and free cancellation.
-          </p>
-          <div className="flex justify-center pt-4">
-            <Link href="/rooms">
-              <Button
-                size="lg"
-                className="rounded-full bg-white px-8 font-bold text-navy-900 shadow-xl shadow-navy-950/30 hover:bg-blue-50"
-              >
-                Explore Rooms & Book Now
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* ============ Facilities Directory ============ */}
+      <FacilityDirectory
+        facilities={facilities}
+        isLoading={facilitiesLoading}
+        hasError={facilitiesError}
+        onRetry={retryFacilities}
+      />
+
+      {/* ============ Gallery ============ */}
+      <GallerySection />
 
       <Footer />
     </div>

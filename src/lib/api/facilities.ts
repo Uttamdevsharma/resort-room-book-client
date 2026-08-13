@@ -5,6 +5,7 @@ export interface Facility {
   name: string;
   description?: string | null;
   icon?: string | null;
+  imageUrl?: string | null;
   image?: string | null;
   openingHours?: string | null;
   status: "ACTIVE" | "INACTIVE";
@@ -13,6 +14,10 @@ export interface Facility {
 export const facilitiesApi = {
   async list() {
     return apiRequest<Facility[]>("/facilities");
+  },
+
+  async listPublic() {
+    return apiRequest<Facility[]>("/facilities/public");
   },
 
   async getById(id: string) {

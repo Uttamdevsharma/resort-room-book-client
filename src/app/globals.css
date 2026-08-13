@@ -237,8 +237,41 @@ html {
   }
 }
 
+.lightbox-fade {
+  animation: lightbox-fade 0.35s ease both;
+}
+
+.lightbox-in {
+  animation: lightbox-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .skeleton-shimmer::after {
+    animation: none;
+  }
+
+  .lightbox-fade,
+  .lightbox-in {
     animation: none;
   }
 }
