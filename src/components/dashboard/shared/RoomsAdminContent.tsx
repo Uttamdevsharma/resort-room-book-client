@@ -176,7 +176,7 @@ export function RoomsAdminContent() {
               <option value="">-- Select Room Type --</option>
               {roomTypes.map((rt) => (
                 <option key={rt.id} value={rt.id}>
-                  {rt.name} (${rt.basePrice}/night)
+                  {rt.name} (৳{rt.basePrice}/night)
                 </option>
               ))}
             </select>

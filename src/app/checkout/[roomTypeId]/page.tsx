@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { couponsApi, CouponValidationResult } from "@/lib/api/coupons";
 import { bookingsApi } from "@/lib/api/bookings";
@@ -9,7 +10,7 @@ import { paymentsApi } from "@/lib/api/payments";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Loading } from "@/components/ui/Loading";
-import { AlertCircle, CheckCircle2, Ticket, CreditCard, ShieldCheck, ArrowLeft, Sparkles } from "lucide-react";
+import { AlertCircle, CheckCircle2, Ticket, CreditCard, ShieldCheck, ArrowLeft } from "lucide-react";
 
 function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
   const router = useRouter();
@@ -78,7 +79,7 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
     } catch (err: any) {
       setCouponError(err.message || "Invalid coupon code.");
       setAppliedCoupon(null);
-    } fontFinally: {
+    } finally {
       setValidatingCoupon(false);
     }
   };
@@ -107,14 +108,14 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
       // Step 2: Create Stripe Checkout Session & Redirect
       const paymentRes = await paymentsApi.createCheckoutSession(
         bookingId,
-        `${window.location.origin}/customer/bookings/${bookingId}?payment=success`,
-        `${window.location.origin}/customer/bookings/${bookingId}?payment=cancelled`
+        `${window.location.origin}/checkout/result/${bookingId}?status=success`,
+        `${window.location.origin}/checkout/result/${bookingId}?status=cancelled`
       );
 
       if (paymentRes.data?.url) {
         window.location.href = paymentRes.data.url;
       } else {
-        router.push(`/customer/bookings/${bookingId}`);
+        router.push(`/checkout/result/${bookingId}?status=success`);
       }
     } catch (err: any) {
       setError(err.message || "Failed to create booking. Please try again.");
@@ -131,15 +132,26 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
       <div className="p-8 text-center bg-card rounded-2xl border border-border">
         <h2 className="text-xl font-bold text-foreground">Room Not Found</h2>
         <p className="text-muted-foreground mt-2">The selected room type is unavailable.</p>
+        <Link href="/rooms" className="mt-4 inline-block">
+          <Button variant="outline">← Back to Rooms</Button>
+        </Link>
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Complete Your Reservation</h1>
-        <p className="text-sm text-muted-foreground mt-1">Review stay details and proceed to Stripe Checkout</p>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Complete Your Reservation</h1>
+          <p className="text-sm text-muted-foreground mt-1">Review stay details and proceed to Stripe Checkout</p>
+        </div>
+        <Link
+          href={`/rooms/${room.id}`}
+          className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-primary flex-shrink-0"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Back to Room
+        </Link>
       </div>
 
       {error && (
@@ -160,7 +172,7 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
             <div className="flex-1">
               <Badge variant="primary" className="mb-1">{room.bedType} BED</Badge>
               <h2 className="text-xl font-bold text-foreground">{room.name}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5">Max {room.maxGuests} Guests • ${room.basePrice} / night</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Max {room.maxGuests} Guests • ৳{room.basePrice} / night</p>
             </div>
           </div>
 
@@ -260,8 +272,10 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
 
             {appliedCoupon && (
               <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-sm flex items-center justify-between">
-                <span className="font-semibold">Coupon '{appliedCoupon.code}' Applied!</span>
-                <span>-${appliedCoupon.discountAmount} Off</span>
+                <span className="font-semibold flex items-center gap-1.5">
+                  <CheckCircle2 className="h-4 w-4" /> Coupon '{appliedCoupon.code}' Applied!
+                </span>
+                <span>-৳{appliedCoupon.discountAmount} Off</span>
               </div>
             )}
 
@@ -273,25 +287,25 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
 
         {/* Price Breakdown & Stripe Trigger */}
         <div className="lg:col-span-1">
-          <div className="p-6 rounded-2xl bg-card border border-border shadow-xl space-y-6">
+          <div className="p-6 rounded-2xl bg-card border border-border shadow-xl space-y-6 lg:sticky lg:top-24">
             <h3 className="text-lg font-bold text-foreground border-b border-border pb-3">Price Summary</h3>
 
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-muted-foreground">
-                <span>${room.basePrice} x {nights} nights</span>
-                <span>${subtotal}</span>
+                <span>৳{room.basePrice} x {nights} nights</span>
+                <span>৳{subtotal}</span>
               </div>
 
               {appliedCoupon && (
                 <div className="flex justify-between text-emerald-600 font-medium">
                   <span>Discount ({appliedCoupon.code})</span>
-                  <span>-${discountAmount}</span>
+                  <span>-৳{discountAmount}</span>
                 </div>
               )}
 
               <div className="pt-3 border-t border-border flex justify-between font-extrabold text-foreground text-lg">
                 <span>Total Due</span>
-                <span className="text-primary">${finalTotal}</span>
+                <span className="text-primary">৳{finalTotal}</span>
               </div>
             </div>
 

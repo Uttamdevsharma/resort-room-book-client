@@ -4,6 +4,13 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { authApi, UserProfile } from "@/lib/api/auth";
 import { rbacApi, Permission } from "@/lib/api/rbac";
 import { getStoredToken, clearStoredTokens } from "@/lib/api/client";
+import { STAFF_ROLES } from "@/lib/auth/roles";
+
+interface AuthResult {
+  success: boolean;
+  error?: string;
+  roles?: string[];
+}
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -11,8 +18,8 @@ interface AuthContextType {
   permissions: Permission[];
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (data: { email: string; password: string }) => Promise<{ success: boolean; error?: string }>;
-  register: (data: { name: string; email: string; password: string }) => Promise<{ success: boolean; error?: string }>;
+  login: (data: { email: string; password: string }) => Promise<AuthResult>;
+  register: (data: { name: string; email: string; password: string }) => Promise<AuthResult>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   hasRole: (role: string | string[]) => boolean;
@@ -22,53 +29,47 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const STAFF_ROLES = [
-  "SUPER_ADMIN",
-  "RESORT_MANAGER",
-  "ROOM_MANAGER",
-  "BOOKING_MANAGER",
-  "CUSTOMER_SUPPORT",
-  "MARKETING_MANAGER",
-  "FINANCE",
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const fetchUserData = useCallback(async () => {
+  const fetchUserData = useCallback(async (): Promise<string[]> => {
     const token = getStoredToken();
     if (!token) {
       setUser(null);
       setRoles([]);
       setPermissions([]);
       setIsLoading(false);
-      return;
+      return [];
     }
 
     try {
       const meRes = await authApi.getMe();
       if (meRes.success && meRes.data) {
         const userObj = meRes.data;
+        const meRoles = userObj.roles || [];
         setUser(userObj);
+        setRoles(meRoles);
 
         // Fetch user RBAC roles and permissions
         try {
           const rbacRes = await rbacApi.getMyPermissions(userObj.id);
           if (rbacRes.success && rbacRes.data) {
-            setRoles(rbacRes.data.roles || []);
+            if (rbacRes.data.roles && rbacRes.data.roles.length > 0) {
+              setRoles(rbacRes.data.roles);
+            }
             setPermissions(rbacRes.data.permissions || []);
           } else {
-            setRoles([]);
             setPermissions([]);
           }
         } catch {
           // If user has no specific permissions assigned yet
-          setRoles([]);
           setPermissions([]);
         }
+
+        return meRoles;
       } else {
         clearStoredTokens();
         setUser(null);
@@ -83,19 +84,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
+    return [];
   }, []);
 
   useEffect(() => {
     fetchUserData();
   }, [fetchUserData]);
 
-  const login = async (data: { email: string; password: string }) => {
+  const login = async (data: { email: string; password: string }): Promise<AuthResult> => {
     setIsLoading(true);
     try {
       const res = await authApi.login(data);
       if (res.success && res.data?.tokens) {
-        await fetchUserData();
-        return { success: true };
+        const roles = await fetchUserData();
+        return { success: true, roles };
       }
       return { success: false, error: res.message || "Login failed" };
     } catch (err: any) {
@@ -105,13 +107,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (data: { name: string; email: string; password: string }) => {
+  const register = async (data: { name: string; email: string; password: string }): Promise<AuthResult> => {
     setIsLoading(true);
     try {
       const res = await authApi.register(data);
       if (res.success && res.data?.tokens) {
-        await fetchUserData();
-        return { success: true };
+        const roles = await fetchUserData();
+        return { success: true, roles };
       }
       return { success: false, error: res.message || "Registration failed" };
     } catch (err: any) {

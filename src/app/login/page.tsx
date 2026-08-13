@@ -7,13 +7,14 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/context/AuthContext";
+import { getDefaultDashboardPath } from "@/lib/auth/roles";
 import { Lock, Mail, AlertCircle, ArrowRight } from "lucide-react";
 
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect");
-  const { login, isStaff } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,13 +32,7 @@ function LoginContent() {
         setError(result.error || "Invalid credentials. Please try again.");
         return;
       }
-      if (redirect) {
-        router.push(redirect);
-      } else if (isStaff) {
-        router.push("/dashboard");
-      } else {
-        router.push("/customer/bookings");
-      }
+      router.push(redirect || getDefaultDashboardPath(result.roles || []));
     } catch (err: any) {
       setError(err.message || "Invalid credentials. Please try again.");
     } finally {

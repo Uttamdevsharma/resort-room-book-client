@@ -96,7 +96,7 @@ export default function RoomDetailPage({ params }: { params: Promise<{ id: strin
       return;
     }
     router.push(
-      `/customer/book/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&numAdults=${numAdults}&numChildren=${numChildren}`
+      `/checkout/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&numAdults=${numAdults}&numChildren=${numChildren}`
     );
   };
 
@@ -120,7 +120,7 @@ export default function RoomDetailPage({ params }: { params: Promise<{ id: strin
               </h1>
             </div>
             <div className="text-left md:text-right">
-              <span className="text-3xl font-extrabold text-primary">${room.basePrice}</span>
+              <span className="text-3xl font-extrabold text-primary">৳{room.basePrice}</span>
               <span className="text-sm text-muted-foreground"> / night</span>
             </div>
           </div>
@@ -219,7 +219,7 @@ export default function RoomDetailPage({ params }: { params: Promise<{ id: strin
             <div className="sticky top-24 p-6 rounded-2xl bg-card border border-border shadow-xl space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-border">
                 <div>
-                  <span className="text-2xl font-extrabold text-foreground">${room.basePrice}</span>
+                  <span className="text-2xl font-extrabold text-foreground">৳{room.basePrice}</span>
                   <span className="text-xs text-muted-foreground"> / night</span>
                 </div>
                 <Badge variant="success">Best Rate Guaranteed</Badge>
@@ -286,12 +286,12 @@ export default function RoomDetailPage({ params }: { params: Promise<{ id: strin
                 {/* Price Breakdown */}
                 <div className="p-4 rounded-xl bg-muted/40 space-y-2 text-sm">
                   <div className="flex justify-between text-muted-foreground">
-                    <span>${room.basePrice} x {nights} nights</span>
-                    <span>${estimatedTotal}</span>
+                    <span>৳{room.basePrice} x {nights} nights</span>
+                    <span>৳{estimatedTotal}</span>
                   </div>
                   <div className="flex justify-between font-bold text-foreground text-base pt-2 border-t border-border">
                     <span>Estimated Total</span>
-                    <span className="text-primary">${estimatedTotal}</span>
+                    <span className="text-primary">৳{estimatedTotal}</span>
                   </div>
                 </div>
 

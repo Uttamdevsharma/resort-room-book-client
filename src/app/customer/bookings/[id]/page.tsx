@@ -184,7 +184,7 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
                         {br.room ? `Room #${br.room.roomNumber}` : "Physical room will be assigned at check-in"}
                       </span>
                     </div>
-                    <span className="font-extrabold text-primary">${br.pricePerNight} / night</span>
+                    <span className="font-extrabold text-primary">৳{br.pricePerNight} / night</span>
                   </div>
                 ))}
               </div>
@@ -199,31 +199,31 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
             <div className="space-y-2.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${booking.subtotalAmount}</span>
+                <span>৳{booking.subtotalAmount}</span>
               </div>
               {Number(booking.discountAmount) > 0 && (
                 <div className="flex justify-between text-emerald-600">
                   <span>Discount ({booking.couponCode || "Promo"})</span>
-                  <span>-${booking.discountAmount}</span>
+                  <span>-৳{booking.discountAmount}</span>
                 </div>
               )}
               {Number(booking.taxAmount) > 0 && (
                 <div className="flex justify-between text-muted-foreground">
                   <span>Taxes & Fees</span>
-                  <span>${booking.taxAmount}</span>
+                  <span>৳{booking.taxAmount}</span>
                 </div>
               )}
               <div className="pt-2 border-t border-border flex justify-between font-extrabold text-foreground text-base">
                 <span>Total Charge</span>
-                <span>${booking.totalAmount}</span>
+                <span>৳{booking.totalAmount}</span>
               </div>
               <div className="flex justify-between text-emerald-600 font-semibold">
                 <span>Amount Paid</span>
-                <span>${booking.paidAmount}</span>
+                <span>৳{booking.paidAmount}</span>
               </div>
               <div className="flex justify-between text-rose-500 font-extrabold text-base pt-2 border-t border-border">
                 <span>Balance Due</span>
-                <span>${booking.dueAmount}</span>
+                <span>৳{booking.dueAmount}</span>
               </div>
             </div>
           </div>

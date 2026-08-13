@@ -2,19 +2,31 @@
 
 import { useState, useEffect } from "react";
 import { rbacApi, Role, Permission } from "@/lib/api/rbac";
-import { customersApi, CustomerUser } from "@/lib/api/customers";
+import { customersApi, CustomerUser, CreateUserData } from "@/lib/api/customers";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { Loading } from "@/components/ui/Loading";
-import { Plus, Edit2, Trash2, ShieldCheck, UserPlus, UserMinus, Search, Users } from "lucide-react";
+import { Input } from "@/components/ui/Input";
+import { Plus, Edit2, Trash2, ShieldCheck, UserPlus, UserMinus, Search, Users, UserCog, Mail, Lock, User, AlertTriangle, RefreshCw } from "lucide-react";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
+
+// Predefined roles available for user creation (excludes SUPER_ADMIN)
+const PREDEFINED_ROLES: { name: string; label: string }[] = [
+  { name: "RESORT_MANAGER", label: "Resort Manager" },
+  { name: "ROOM_MANAGER", label: "Room Manager" },
+  { name: "BOOKING_MANAGER", label: "Booking Manager" },
+  { name: "CUSTOMER_SUPPORT", label: "Customer Support" },
+  { name: "MARKETING_MANAGER", label: "Marketing Manager" },
+  { name: "FINANCE", label: "Finance" },
+];
 
 export function RBACAdminContent() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [permissions, setPermissions] = useState<Permission[]>([]);
   const [users, setUsers] = useState<CustomerUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"roles" | "permissions" | "users">("roles");
 
   // Role Modal
@@ -30,19 +42,37 @@ export function RBACAdminContent() {
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
   const [assignSubmitting, setAssignSubmitting] = useState(false);
 
-  const loadData = async () => {
+  // Create User Modal
+  const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
+  const [createUserName, setCreateUserName] = useState("");
+  const [createUserEmail, setCreateUserEmail] = useState("");
+  const [createUserPassword, setCreateUserPassword] = useState("");
+  const [createUserRole, setCreateUserRole] = useState(""); // role name e.g. RESORT_MANAGER
+  const [createUserSubmitting, setCreateUserSubmitting] = useState(false);
+  const [createUserError, setCreateUserError] = useState("");
+
+const loadData = async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const [rolesRes, permsRes, usersRes] = await Promise.allSettled([
         rbacApi.listRoles(),
         rbacApi.listPermissions(),
         customersApi.listCustomers(),
       ]);
+      const errors: string[] = [];
       if (rolesRes.status === "fulfilled" && rolesRes.value.data) setRoles(rolesRes.value.data);
+      else if (rolesRes.status === "rejected") errors.push(`Roles: ${rolesRes.reason?.message || "Failed to load"}`);
       if (permsRes.status === "fulfilled" && permsRes.value.data) setPermissions(permsRes.value.data);
+      else if (permsRes.status === "rejected") errors.push(`Permissions: ${permsRes.reason?.message || "Failed to load"}`);
       if (usersRes.status === "fulfilled" && usersRes.value.data) setUsers(usersRes.value.data);
+      else if (usersRes.status === "rejected") errors.push(`Users: ${usersRes.reason?.message || "Failed to load"}`);
+      if (errors.length > 0 && roles.length === 0 && permissions.length === 0 && users.length === 0) {
+        setError(errors.join("; "));
+      }
     } catch (err) {
       console.error("Error loading RBAC data:", err);
+      setError(err instanceof Error ? err.message : "Failed to load RBAC data");
     } finally {
       setIsLoading(false);
     }
@@ -51,6 +81,41 @@ export function RBACAdminContent() {
   useEffect(() => {
     loadData();
   }, []);
+
+  const handleOpenCreateUser = () => {
+    setCreateUserName("");
+    setCreateUserEmail("");
+    setCreateUserPassword("");
+    setCreateUserRole("");
+    setCreateUserError("");
+    setCreateUserModalOpen(true);
+  };
+
+  const handleCreateUserSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateUserSubmitting(true);
+    setCreateUserError("");
+    try {
+      const userData: CreateUserData = {
+        name: createUserName,
+        email: createUserEmail,
+        password: createUserPassword,
+        // Send role name directly — server will upsert the role if it doesn't exist
+        role: createUserRole || undefined,
+      };
+      const res = await customersApi.createUser(userData);
+      if (res.success && res.data) {
+        setCreateUserModalOpen(false);
+        loadData();
+      } else {
+        setCreateUserError(res.message || "Failed to create user.");
+      }
+    } catch (err: any) {
+      setCreateUserError(err.message || "Failed to create user.");
+    } finally {
+      setCreateUserSubmitting(false);
+    }
+  };
 
   const handleOpenCreateRole = () => {
     setEditingRole(null);
@@ -134,6 +199,26 @@ export function RBACAdminContent() {
     return <Loading text="Loading RBAC configuration..." />;
   }
 
+  if (error) {
+    return (
+      <div className="p-6 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-rose-500/20 rounded-full">
+            <AlertTriangle className="h-5 w-5 text-rose-500" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-rose-600 dark:text-rose-400">Failed to load RBAC data</h3>
+            <p className="text-sm text-muted-foreground mt-1">{error}</p>
+            <Button variant="outline" size="sm" onClick={loadData} className="mt-3 gap-1.5">
+              <RefreshCw className="h-4 w-4" />
+              Retry
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -166,6 +251,12 @@ export function RBACAdminContent() {
             {tab.label}
           </Button>
         ))}
+        {activeTab === "users" && (
+          <Button onClick={handleOpenCreateUser} variant="primary" size="sm" className="gap-1.5 ml-2">
+            <UserPlus className="h-4 w-4" />
+            Create User
+          </Button>
+        )}
       </div>
 
       {/* Roles Tab */}
@@ -385,6 +476,80 @@ export function RBACAdminContent() {
             </Button>
             <Button type="submit" variant="primary" disabled={assignSubmitting}>
               {assignSubmitting ? "Saving..." : "Update Roles"}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Create User Modal */}
+      <Modal
+        isOpen={createUserModalOpen}
+        onClose={() => setCreateUserModalOpen(false)}
+        title="Create New User"
+      >
+        <form onSubmit={handleCreateUserSubmit} className="space-y-4">
+          {createUserError && (
+            <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-sm">
+              {createUserError}
+            </div>
+          )}
+          <div>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">Full Name</label>
+            <Input
+              type="text"
+              required
+              placeholder="John Doe"
+              value={createUserName}
+              onChange={(e) => setCreateUserName(e.target.value)}
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-hidden"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">Email Address</label>
+            <Input
+              type="email"
+              required
+              placeholder="user@example.com"
+              value={createUserEmail}
+              onChange={(e) => setCreateUserEmail(e.target.value)}
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-hidden"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">Password</label>
+            <Input
+              type="password"
+              required
+              placeholder="••••••••"
+              value={createUserPassword}
+              onChange={(e) => setCreateUserPassword(e.target.value)}
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-hidden"
+              minLength={8}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">Role</label>
+            <select
+              value={createUserRole}
+              onChange={(e) => setCreateUserRole(e.target.value)}
+              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-hidden"
+            >
+              <option value="">Select a role (optional — defaults to CUSTOMER)</option>
+              {PREDEFINED_ROLES.map((r) => (
+                <option key={r.name} value={r.name}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-muted-foreground mt-1">SUPER_ADMIN is excluded. Role will be created automatically if it does not yet exist.</p>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-4 border-t border-border">
+            <Button variant="ghost" type="button" onClick={() => setCreateUserModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" disabled={createUserSubmitting}>
+              {createUserSubmitting ? "Creating..." : "Create User"}
             </Button>
           </div>
         </form>

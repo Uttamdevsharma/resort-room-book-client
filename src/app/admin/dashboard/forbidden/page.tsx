@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { ShieldAlert, Home, ArrowLeft, Lock } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
+import { getDefaultDashboardPath } from "@/lib/auth/roles";
 
 interface ForbiddenPageProps {
   reason?: string;
@@ -12,17 +13,6 @@ interface ForbiddenPageProps {
 export default function ForbiddenPage({ reason }: ForbiddenPageProps) {
   const { roles } = useAuth();
   const displayReason = reason || "Insufficient permissions to access this resource.";
-
-  function getDefaultDashboardPath(roles: string[]): string {
-    if (roles.includes("SUPER_ADMIN")) return "/admin/dashboard";
-    if (roles.includes("RESORT_MANAGER")) return "/resort-manager/dashboard";
-    if (roles.includes("ROOM_MANAGER")) return "/room-manager/dashboard";
-    if (roles.includes("BOOKING_MANAGER")) return "/booking-manager/dashboard";
-    if (roles.includes("CUSTOMER_SUPPORT")) return "/customer-support/dashboard";
-    if (roles.includes("MARKETING_MANAGER")) return "/marketing-manager/dashboard";
-    if (roles.includes("FINANCE")) return "/finance/dashboard";
-    return "/login";
-  }
 
   const defaultDashboard = getDefaultDashboardPath(roles);
 

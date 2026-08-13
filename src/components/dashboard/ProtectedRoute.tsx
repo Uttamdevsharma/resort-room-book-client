@@ -4,23 +4,13 @@ import { useAuth } from "@/lib/context/AuthContext";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Loading } from "@/components/ui/Loading";
+import { getDefaultDashboardPath } from "@/lib/auth/roles";
 import dynamic from "next/dynamic";
 
 const ForbiddenPage = dynamic(() => import("@/app/admin/dashboard/forbidden/page").then((mod) => mod.default), {
   ssr: false,
   loading: () => <Loading text="Loading..." />,
 });
-
-function getDefaultDashboardPath(roles: string[]): string {
-  if (roles.includes("SUPER_ADMIN")) return "/admin/dashboard";
-  if (roles.includes("RESORT_MANAGER")) return "/resort-manager/dashboard";
-  if (roles.includes("ROOM_MANAGER")) return "/room-manager/dashboard";
-  if (roles.includes("BOOKING_MANAGER")) return "/booking-manager/dashboard";
-  if (roles.includes("CUSTOMER_SUPPORT")) return "/customer-support/dashboard";
-  if (roles.includes("MARKETING_MANAGER")) return "/marketing-manager/dashboard";
-  if (roles.includes("FINANCE")) return "/finance/dashboard";
-  return "/login";
-}
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

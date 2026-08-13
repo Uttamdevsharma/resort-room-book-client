@@ -173,7 +173,7 @@ function RoomsContent() {
                         />
                         <div className="absolute top-3 right-3">
                           <Badge variant="primary" size="lg" className="backdrop-blur-md shadow-md">
-                            ${room.basePrice} / night
+                            ৳{room.basePrice} / night
                           </Badge>
                         </div>
                       </div>

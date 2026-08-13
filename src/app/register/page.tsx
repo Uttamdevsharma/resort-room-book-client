@@ -7,6 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/context/AuthContext";
+import { getDefaultDashboardPath } from "@/lib/auth/roles";
 import { User, Mail, Lock, AlertCircle, ArrowRight } from "lucide-react";
 
 export default function RegisterPage() {
@@ -30,7 +31,7 @@ export default function RegisterPage() {
         setError(result.error || "Registration failed. Please try again.");
         return;
       }
-      router.push("/customer/bookings");
+      router.push(getDefaultDashboardPath(result.roles || []));
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {

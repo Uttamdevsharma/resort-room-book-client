@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Sun, Moon, Bell, User, LogOut, LayoutDashboard, Calendar, CreditCard } from "lucide-react";
+import { Menu, X, Sun, Moon, Bell, User, LogOut, LayoutDashboard, CreditCard, ChevronDown, CalendarCheck, Receipt, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/context/AuthContext";
 import { notificationsApi } from "@/lib/api/notifications";
@@ -11,6 +11,7 @@ import { notificationsApi } from "@/lib/api/notifications";
 export function Navbar() {
   const { user, isAuthenticated, isStaff, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -57,6 +58,15 @@ export function Navbar() {
     router.push("/");
   };
 
+  const accountMenuItems = [
+    { label: "My Bookings", href: "/customer/bookings", icon: CalendarCheck },
+    { label: "Payments", href: "/customer/payments", icon: CreditCard },
+    { label: "Refunds", href: "/customer/refunds", icon: Receipt },
+    { label: "Reviews", href: "/customer/reviews", icon: Star },
+    { label: "Notifications", href: "/customer/notifications", icon: Bell },
+    { label: "Profile Settings", href: "/customer/profile", icon: User },
+  ];
+
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
@@ -64,6 +74,7 @@ export function Navbar() {
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsProfileMenuOpen(false);
   }, [pathname]);
 
   return (
@@ -178,12 +189,50 @@ export function Navbar() {
                     </Button>
                   </Link>
                 ) : (
-                  <Link href="/customer/profile">
-                    <Button variant="outline" size="sm" className="gap-1.5">
-                      <User className="h-4 w-4" />
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsProfileMenuOpen((open) => !open)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-transparent px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors"
+                      aria-haspopup="menu"
+                      aria-expanded={isProfileMenuOpen}
+                    >
+                      <User className="h-4 w-4 text-muted-foreground" />
                       <span className="hidden sm:inline max-w-[120px] truncate">{user?.name}</span>
-                    </Button>
-                  </Link>
+                      <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isProfileMenuOpen ? "rotate-180" : ""}`} />
+                    </button>
+
+                    {isProfileMenuOpen && (
+                      <>
+                        <div className="fixed inset-0 z-10" onClick={() => setIsProfileMenuOpen(false)} />
+                        <div
+                          className="absolute right-0 mt-2 w-60 z-20 rounded-xl border border-border bg-card shadow-xl overflow-hidden"
+                          role="menu"
+                        >
+                          <div className="px-4 py-3 border-b border-border">
+                            <p className="text-sm font-bold text-foreground truncate">{user?.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                          </div>
+                          <div className="py-1.5">
+                            {accountMenuItems.map((item) => {
+                              const Icon = item.icon;
+                              return (
+                                <Link
+                                  key={item.href}
+                                  href={item.href}
+                                  onClick={() => setIsProfileMenuOpen(false)}
+                                  className="flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                                  role="menuitem"
+                                >
+                                  <Icon className="h-4 w-4" />
+                                  <span>{item.label}</span>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 )}
 
                 <Button variant="ghost" size="sm" onClick={handleLogout} className="rounded-full w-9 h-9 p-0">
@@ -248,32 +297,22 @@ export function Navbar() {
                     Staff Dashboard
                   </Link>
                 ) : (
-                  <>
-                    <Link
-                      href="/customer/bookings"
-                      className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-                    >
-                      My Bookings
-                    </Link>
-                    <Link
-                      href="/customer/payments"
-                      className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-                    >
-                      Payment History
-                    </Link>
-                    <Link
-                      href="/customer/notifications"
-                      className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-                    >
-                      Notifications
-                    </Link>
-                    <Link
-                      href="/customer/profile"
-                      className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-                    >
-                      My Profile
-                    </Link>
-                  </>
+                  <div className="space-y-2">
+                    {accountMenuItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
+                        >
+                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
                 )}
                 <button
                   onClick={handleLogout}
