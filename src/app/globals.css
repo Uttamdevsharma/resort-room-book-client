@@ -2,7 +2,7 @@
 
 :root {
   --background: #fafafa;
-  --foreground: #1a1a2e;
+  --foreground: #0c1a33;
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --primary-light: #dbeafe;
@@ -48,6 +48,8 @@
   --ring: #3b82f6;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -70,8 +72,46 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-ring: var(--ring);
+  --color-navy-950: #0a172c;
+  --color-navy-900: #0d1f3c;
+  --color-navy-800: #12294e;
+  --color-navy-700: #1a3a6b;
+  --color-navy: #0d1f3c;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --animate-fade-up: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade-in: fade-in 1s ease both;
+  --animate-hero-zoom: hero-zoom 24s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes hero-zoom {
+    from {
+      transform: scale(1.02);
+    }
+    to {
+      transform: scale(1.12);
+    }
+  }
   --breakpoint-xs: 480px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;

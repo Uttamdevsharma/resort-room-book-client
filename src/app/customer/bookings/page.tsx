@@ -97,8 +97,8 @@ export default function MyBookingsPage() {
                     <Calendar className="h-4 w-4 text-primary" />
                     {new Date(b.checkIn).toLocaleDateString()} — {new Date(b.checkOut).toLocaleDateString()}
                   </span>
-                  <span>{b.totalNights} Nights</span>
-                  <span>{b.numGuests} Guests</span>
+                  <span>{b.nights} Nights</span>
+                  <span>{b.adults + b.children} Guests</span>
                 </div>
               </div>
 

@@ -37,6 +37,12 @@ export interface RoomType {
   status: "ACTIVE" | "INACTIVE";
   roomTypeAmenities?: { amenity: Amenity }[];
   media?: RoomTypeMedia[];
+  rooms?: {
+    id: string;
+    roomNumber: string;
+    floor?: number | null;
+    status: "AVAILABLE" | "OCCUPIED" | "MAINTENANCE" | "INACTIVE";
+  }[];
   _count?: { rooms: number };
 }
 

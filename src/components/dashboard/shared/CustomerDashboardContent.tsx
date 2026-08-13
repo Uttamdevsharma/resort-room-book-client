@@ -126,7 +126,7 @@ export function CustomerDashboardContent() {
                     </div>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {new Date(b.checkIn).toLocaleDateString()} — {new Date(b.checkOut).toLocaleDateString()} &bull;{" "}
-                      {b.totalNights} nights
+                      {b.nights} nights
                     </p>
                   </div>
                 </div>

@@ -37,6 +37,13 @@ export const paymentsApi = {
     });
   },
 
+  async confirmPayment(bookingId: string) {
+    return apiRequest<{ id: string; bookingNumber: string }>("/payments/confirm", {
+      method: "POST",
+      body: JSON.stringify({ bookingId }),
+    });
+  },
+
   async getMyPayments(query?: { page?: number; limit?: number }) {
     const params = new URLSearchParams();
     if (query?.page) params.append("page", String(query.page));

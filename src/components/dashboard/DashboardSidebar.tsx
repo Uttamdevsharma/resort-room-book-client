@@ -19,6 +19,8 @@ import {
   Layers,
   ShieldCheck,
   X,
+  Home,
+  Globe,
 } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
 
@@ -28,6 +30,12 @@ interface NavItem {
   icon: any;
   roles?: string[];
 }
+
+const publicNavItems = [
+  { label: "Home", href: "/", icon: Home },
+  { label: "Rooms & Suites", href: "/rooms", icon: BedDouble },
+  { label: "Facilities", href: "/facilities", icon: Palmtree },
+];
 
 const sidebarItems: NavItem[] = [
   {
@@ -180,12 +188,12 @@ export function DashboardSidebar({
         `}
       >
         <div className="h-16 px-6 flex items-center justify-between border-b border-border">
-          <Link href={basePath} className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          <Link href={basePath} className="group flex items-center gap-2.5 cursor-pointer">
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm transition-all duration-300 group-hover:bg-primary-hover group-hover:scale-105 group-hover:shadow-md group-active:scale-95">
               R
             </div>
             <div>
-              <span className="font-extrabold text-foreground tracking-tight block text-base leading-none">
+              <span className="font-extrabold text-foreground tracking-tight block text-base leading-none transition-colors duration-200 group-hover:text-primary">
                 ResortStay
               </span>
               <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
@@ -197,7 +205,8 @@ export function DashboardSidebar({
           {onClose && (
             <button
               onClick={onClose}
-              className="lg:hidden p-1 rounded-md text-muted-foreground hover:bg-muted"
+              className="lg:hidden p-1 rounded-md text-muted-foreground hover:bg-muted cursor-pointer transition-colors duration-200 active:scale-95"
+              aria-label="Close navigation menu"
             >
               <X className="h-5 w-5" />
             </button>
@@ -226,11 +235,12 @@ export function DashboardSidebar({
                 href={roleHref}
                 onClick={onClose}
                 className={`
-                  flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all
+                  flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium cursor-pointer
+                  transition-all duration-200 ease-in-out active:scale-[0.97]
                   ${
                     active
                       ? "bg-primary text-white font-semibold shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted hover:translate-x-0.5"
                   }
                 `}
               >
@@ -241,13 +251,26 @@ export function DashboardSidebar({
           })}
         </nav>
 
-        <div className="p-4 border-t border-border">
-          <Link
-            href="/"
-            className="flex items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors py-2 rounded-lg hover:bg-muted"
-          >
-            ← Back to Public Website
-          </Link>
+        {/* Public website links */}
+        <div className="p-4 border-t border-border space-y-1">
+          <span className="text-xs font-semibold text-muted-foreground uppercase px-3 py-1 flex items-center gap-1.5">
+            <Globe className="h-3.5 w-3.5" />
+            Explore ResortStay
+          </span>
+          {publicNavItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-muted-foreground cursor-pointer transition-all duration-200 ease-in-out hover:text-foreground hover:bg-muted hover:translate-x-0.5 active:scale-[0.97]"
+              >
+                <Icon className="h-4 w-4 text-muted-foreground" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
         </div>
       </aside>
     </>

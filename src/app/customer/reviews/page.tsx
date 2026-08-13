@@ -134,8 +134,8 @@ export default function CustomerReviewsPage() {
                 const bId = e.target.value;
                 setSelectedBookingId(bId);
                 const b = bookings.find((bk) => bk.id === bId);
-                if (b?.bookingRooms?.[0]?.roomTypeId) {
-                  setSelectedRoomTypeId(b.bookingRooms[0].roomTypeId);
+                if (b?.roomTypeId) {
+                  setSelectedRoomTypeId(b.roomTypeId);
                 }
               }}
               className="w-full px-3 py-2 text-sm bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-hidden"

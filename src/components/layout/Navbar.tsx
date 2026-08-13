@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, Sun, Moon, Bell, User, LogOut, LayoutDashboard, CreditCard, ChevronDown, CalendarCheck, Receipt, Star } from "lucide-react";
+import { Menu, X, Sun, Moon, Bell, User, LogOut, LayoutDashboard, CreditCard, ChevronDown, CalendarCheck, Receipt, Star, Home, BedDouble, Palmtree } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/context/AuthContext";
 import { notificationsApi } from "@/lib/api/notifications";
@@ -58,6 +58,12 @@ export function Navbar() {
     router.push("/");
   };
 
+  const publicNavItems = [
+    { label: "Home", href: "/", icon: Home },
+    { label: "Rooms & Suites", href: "/rooms", icon: BedDouble },
+    { label: "Facilities", href: "/facilities", icon: Palmtree },
+  ];
+
   const accountMenuItems = [
     { label: "My Bookings", href: "/customer/bookings", icon: CalendarCheck },
     { label: "Payments", href: "/customer/payments", icon: CreditCard },
@@ -72,6 +78,8 @@ export function Navbar() {
     return pathname.startsWith(href);
   };
 
+  const isOverHero = pathname === "/" && !isScrolled;
+
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsProfileMenuOpen(false);
@@ -85,69 +93,75 @@ export function Navbar() {
       <header
         className={`
           fixed top-0 left-0 right-0 z-40
-          bg-background/95 backdrop-blur-md border-b border-border
           transition-all duration-300
-          ${isScrolled ? "shadow-md py-1" : "py-2"}
+          ${
+            isOverHero
+              ? "border-b border-transparent bg-transparent py-2"
+              : "border-b border-border bg-background/95 backdrop-blur-md py-2 shadow-md"
+          }
+          ${isScrolled ? "shadow-md py-1" : ""}
         `}
         role="banner"
       >
         <nav className="container flex h-14 items-center justify-between gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-foreground hover:opacity-80 transition-opacity"
+            className="group flex items-center gap-2 text-xl font-extrabold tracking-tight text-foreground cursor-pointer"
             aria-label="ResortStay - Home"
           >
-            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm">
+            <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:bg-primary-hover group-hover:scale-105 group-active:scale-95">
               <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+            <span className={`transition-opacity duration-300 group-hover:opacity-80 ${isOverHero ? "text-white" : "bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"}`}>
               ResortStay
             </span>
           </Link>
 
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            <Link
-              href="/"
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive("/") && pathname === "/"
-                  ? "bg-primary/10 text-primary font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-            >
-              Home
-            </Link>
-            <Link
-              href="/rooms"
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive("/rooms")
-                  ? "bg-primary/10 text-primary font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-            >
-              Rooms & Suites
-            </Link>
-            <Link
-              href="/facilities"
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive("/facilities")
-                  ? "bg-primary/10 text-primary font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              }`}
-            >
-              Facilities
-            </Link>
+            {publicNavItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`
+                    relative px-3 py-1.5 rounded-lg text-sm font-medium cursor-pointer
+                    transition-all duration-200 ease-in-out
+                    active:scale-95
+                    ${
+                      active
+                        ? isOverHero
+                          ? "bg-white/15 text-white font-semibold"
+                          : "bg-primary/10 text-primary font-semibold"
+                        : isOverHero
+                          ? "text-white/80 hover:text-white hover:bg-white/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }
+                  `}
+                >
+                  <span>{item.label}</span>
+                  {active && (
+                    <span className={`absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full ${isOverHero ? "bg-white" : "bg-primary"}`} />
+                  )}
+                </Link>
+              );
+            })}
 
             {isAuthenticated && !isStaff && (
               <>
                 <Link
                   href="/customer/bookings"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 ease-in-out active:scale-95 ${
                     isActive("/customer/bookings")
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                      ? isOverHero
+                        ? "bg-white/15 text-white font-semibold"
+                        : "bg-primary/10 text-primary font-semibold"
+                      : isOverHero
+                        ? "text-white/80 hover:text-white hover:bg-white/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
                   }`}
                 >
                   My Bookings
@@ -157,22 +171,22 @@ export function Navbar() {
           </div>
 
           {/* Action Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <Button
               variant="ghost"
               size="sm"
               onClick={toggleTheme}
               aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-              className="rounded-full w-9 h-9 p-0"
+              className={`rounded-full w-9 h-9 p-0 ${isOverHero ? "text-white hover:bg-white/10" : ""}`}
             >
               {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
 
             {isAuthenticated ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {!isStaff && (
                   <Link href="/customer/notifications">
-                    <Button variant="ghost" size="sm" className="relative rounded-full w-9 h-9 p-0">
+                    <Button variant="ghost" size="sm" className={`relative rounded-full w-9 h-9 p-0 ${isOverHero ? "text-white hover:bg-white/10" : ""}`}>
                       <Bell className="h-4 w-4" />
                       {unreadCount > 0 && (
                         <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-background animate-pulse" />
@@ -192,20 +206,30 @@ export function Navbar() {
                   <div className="relative">
                     <button
                       onClick={() => setIsProfileMenuOpen((open) => !open)}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-transparent px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors"
+                      className={`
+                        inline-flex items-center gap-1.5 rounded-lg border bg-transparent px-3 py-1.5 text-sm font-medium cursor-pointer
+                        transition-all duration-200 ease-in-out active:scale-[0.97]
+                        ${
+                          isProfileMenuOpen
+                            ? "bg-muted border-border-hover shadow-sm"
+                            : isOverHero
+                              ? "border-white/25 text-white hover:bg-white/10 hover:border-white/40"
+                              : "border-border hover:bg-muted hover:border-border-hover"
+                        }
+                      `}
                       aria-haspopup="menu"
                       aria-expanded={isProfileMenuOpen}
                     >
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      <User className={`h-4 w-4 ${isOverHero && !isProfileMenuOpen ? "text-white/80" : "text-muted-foreground"}`} />
                       <span className="hidden sm:inline max-w-[120px] truncate">{user?.name}</span>
-                      <ChevronDown className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isProfileMenuOpen ? "rotate-180" : ""}`} />
+                      <ChevronDown className={`h-3.5 w-3.5 ${isOverHero && !isProfileMenuOpen ? "text-white/80" : "text-muted-foreground"} transition-transform duration-200 ${isProfileMenuOpen ? "rotate-180" : ""}`} />
                     </button>
 
                     {isProfileMenuOpen && (
                       <>
                         <div className="fixed inset-0 z-10" onClick={() => setIsProfileMenuOpen(false)} />
                         <div
-                          className="absolute right-0 mt-2 w-60 z-20 rounded-xl border border-border bg-card shadow-xl overflow-hidden"
+                          className="absolute right-0 mt-2 w-60 z-20 rounded-xl border border-border bg-card shadow-xl overflow-hidden animate-in fade-in zoom-in-95"
                           role="menu"
                         >
                           <div className="px-4 py-3 border-b border-border">
@@ -215,15 +239,23 @@ export function Navbar() {
                           <div className="py-1.5">
                             {accountMenuItems.map((item) => {
                               const Icon = item.icon;
+                              const active = isActive(item.href);
                               return (
                                 <Link
                                   key={item.href}
                                   href={item.href}
                                   onClick={() => setIsProfileMenuOpen(false)}
-                                  className="flex items-center gap-3 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                                  className={`
+                                    flex items-center gap-3 px-4 py-2 text-sm cursor-pointer
+                                    transition-all duration-200 ease-in-out
+                                    ${active
+                                      ? "text-primary font-semibold bg-primary/10"
+                                      : "text-muted-foreground hover:text-foreground hover:bg-muted hover:pl-5"
+                                    }
+                                  `}
                                   role="menuitem"
                                 >
-                                  <Icon className="h-4 w-4" />
+                                  <Icon className={`h-4 w-4 ${active ? "text-primary" : ""}`} />
                                   <span>{item.label}</span>
                                 </Link>
                               );
@@ -235,19 +267,19 @@ export function Navbar() {
                   </div>
                 )}
 
-                <Button variant="ghost" size="sm" onClick={handleLogout} className="rounded-full w-9 h-9 p-0">
-                  <LogOut className="h-4 w-4 text-muted-foreground hover:text-rose-500" />
+                <Button variant="ghost" size="sm" onClick={handleLogout} className="rounded-full w-9 h-9 p-0" title="Sign out">
+                  <LogOut className={`h-4 w-4 ${isOverHero ? "text-white/80 hover:text-rose-400" : "text-muted-foreground hover:text-rose-500"} transition-colors`} />
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" className={isOverHero ? "text-white hover:bg-white/10" : ""}>
                     Sign In
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button variant="primary" size="sm">
+                  <Button variant="primary" size="sm" className="shadow-sm">
                     Register
                   </Button>
                 </Link>
@@ -255,7 +287,11 @@ export function Navbar() {
             )}
 
             <button
-              className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
+              className={`md:hidden p-2 rounded-lg cursor-pointer transition-colors duration-200 active:scale-95 ${
+                isOverHero
+                  ? "text-white hover:bg-white/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
+              }`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -266,25 +302,30 @@ export function Navbar() {
 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background px-4 py-4 space-y-2">
-            <Link
-              href="/"
-              className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-            >
-              Home
-            </Link>
-            <Link
-              href="/rooms"
-              className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-            >
-              Rooms & Suites
-            </Link>
-            <Link
-              href="/facilities"
-              className="block px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
-            >
-              Facilities
-            </Link>
+          <div className="md:hidden border-t border-border bg-background px-4 py-4 space-y-2 animate-in fade-in slide-in-from-top-1">
+            {publicNavItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`
+                    flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base font-medium cursor-pointer
+                    transition-all duration-200 ease-in-out active:scale-[0.98]
+                    ${
+                      active
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-foreground hover:bg-muted hover:pl-4"
+                    }
+                  `}
+                >
+                  <Icon className={`h-4 w-4 ${active ? "text-primary" : "text-muted-foreground"}`} />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
 
             {isAuthenticated && (
               <>
@@ -292,22 +333,32 @@ export function Navbar() {
                 {isStaff ? (
                   <Link
                     href="/dashboard"
-                    className="block px-3 py-2 rounded-lg text-base font-semibold text-primary hover:bg-muted"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base font-semibold text-primary hover:bg-muted cursor-pointer transition-all duration-200 ease-in-out active:scale-[0.98]"
                   >
-                    Staff Dashboard
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Staff Dashboard</span>
                   </Link>
                 ) : (
                   <div className="space-y-2">
                     {accountMenuItems.map((item) => {
                       const Icon = item.icon;
+                      const active = isActive(item.href);
                       return (
                         <Link
                           key={item.href}
                           href={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-base font-medium text-foreground hover:bg-muted"
+                          className={`
+                            flex items-center gap-2.5 px-3 py-2 rounded-lg text-base font-medium cursor-pointer
+                            transition-all duration-200 ease-in-out active:scale-[0.98]
+                            ${active
+                              ? "bg-primary/10 text-primary font-semibold"
+                              : "text-foreground hover:bg-muted hover:pl-4"
+                            }
+                          `}
                         >
-                          <Icon className="h-4 w-4 text-muted-foreground" />
+                          <Icon className={`h-4 w-4 ${active ? "text-primary" : "text-muted-foreground"}`} />
                           <span>{item.label}</span>
                         </Link>
                       );
@@ -316,9 +367,10 @@ export function Navbar() {
                 )}
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-3 py-2 rounded-lg text-base font-medium text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                  className="w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-lg text-base font-medium text-rose-500 cursor-pointer transition-all duration-200 ease-in-out hover:bg-rose-50 dark:hover:bg-rose-950/30 active:scale-[0.98]"
                 >
-                  Sign Out
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
                 </button>
               </>
             )}

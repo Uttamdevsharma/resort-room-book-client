@@ -4,6 +4,7 @@ import { useState, useEffect, use, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { bookingsApi, Booking } from "@/lib/api/bookings";
+import { paymentsApi } from "@/lib/api/payments";
 import { Button } from "@/components/ui/Button";
 import { Loading } from "@/components/ui/Loading";
 import { CheckCircle2, XCircle, CalendarCheck, ArrowRight, RotateCcw, Home } from "lucide-react";
@@ -17,16 +18,22 @@ function PaymentResultContent({ bookingId }: { bookingId: string }) {
 
   useEffect(() => {
     let active = true;
-    bookingsApi
-      .getMyBookingById(bookingId)
-      .then((res) => {
+    const load = async () => {
+      if (isSuccess) {
+        try {
+          await paymentsApi.confirmPayment(bookingId);
+        } catch {}
+      }
+      try {
+        const res = await bookingsApi.getMyBookingById(bookingId);
         if (active && res.data) setBooking(res.data);
-      })
-      .catch(() => {});
+      } catch {}
+    };
+    load();
     return () => {
       active = false;
     };
-  }, [bookingId]);
+  }, [bookingId, isSuccess]);
 
   if (isSuccess) {
     return (

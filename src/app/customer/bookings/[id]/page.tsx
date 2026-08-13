@@ -40,9 +40,30 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  const loadAfterPayment = async () => {
+    setIsLoading(true);
+    try {
+      await paymentsApi.confirmPayment(resolvedParams.id);
+    } catch (err) {
+      console.error("Error confirming payment:", err);
+    }
+    try {
+      const res = await bookingsApi.getMyBookingById(resolvedParams.id);
+      if (res.data) setBooking(res.data);
+    } catch (err) {
+      console.error("Error loading booking details:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetchBooking();
-  }, [resolvedParams.id]);
+    if (paymentStatusBanner === "success") {
+      loadAfterPayment();
+    } else {
+      fetchBooking();
+    }
+  }, [resolvedParams.id, paymentStatusBanner]);
 
   const handlePayNow = async () => {
     if (!booking) return;
@@ -138,7 +159,7 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
           {needsPayment && (
             <Button onClick={handlePayNow} disabled={paying} variant="primary" className="gap-2 font-bold shadow-md flex-1 md:flex-none">
               <CreditCard className="h-4 w-4" />
-              <span>{paying ? "Redirecting..." : `Pay Due ($${booking.dueAmount})`}</span>
+              <span>{paying ? "Redirecting..." : `Pay Due (৳${booking.dueAmount})`}</span>
             </Button>
           )}
 
@@ -166,27 +187,25 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
               </div>
               <div>
                 <span className="text-xs text-muted-foreground uppercase font-semibold block">Duration</span>
-                <span className="text-base font-bold text-foreground mt-0.5 block">{booking.totalNights} Nights ({booking.numGuests} Guests)</span>
+                <span className="text-base font-bold text-foreground mt-0.5 block">{booking.nights} Nights ({booking.adults + booking.children} Guests)</span>
               </div>
             </div>
           </div>
 
           {/* Reserved Rooms List */}
-          {booking.bookingRooms && booking.bookingRooms.length > 0 && (
+          {booking.roomType && (
             <div className="p-6 bg-card border border-border rounded-2xl space-y-4">
               <h2 className="text-lg font-bold text-foreground">Reserved Accommodations</h2>
               <div className="space-y-3">
-                {booking.bookingRooms.map((br) => (
-                  <div key={br.id} className="p-4 rounded-xl border border-border flex items-center justify-between">
-                    <div>
-                      <span className="font-bold text-foreground text-base block">{br.roomType?.name || "Room Suite"}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {br.room ? `Room #${br.room.roomNumber}` : "Physical room will be assigned at check-in"}
-                      </span>
-                    </div>
-                    <span className="font-extrabold text-primary">৳{br.pricePerNight} / night</span>
+                <div key={booking.roomType.id} className="p-4 rounded-xl border border-border flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-foreground text-base block">{booking.roomType.name}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {booking.room ? `Room #${booking.room.roomNumber}` : "Physical room will be assigned at check-in"}
+                    </span>
                   </div>
-                ))}
+                  <span className="font-extrabold text-primary">৳{booking.pricePerNight} / night</span>
+                </div>
               </div>
             </div>
           )}
@@ -199,7 +218,7 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
             <div className="space-y-2.5 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>৳{booking.subtotalAmount}</span>
+                <span>৳{booking.subtotal}</span>
               </div>
               {Number(booking.discountAmount) > 0 && (
                 <div className="flex justify-between text-emerald-600">
@@ -221,10 +240,19 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
                 <span>Amount Paid</span>
                 <span>৳{booking.paidAmount}</span>
               </div>
-              <div className="flex justify-between text-rose-500 font-extrabold text-base pt-2 border-t border-border">
-                <span>Balance Due</span>
-                <span>৳{booking.dueAmount}</span>
-              </div>
+              {Number(booking.dueAmount) > 0 ? (
+                <div className="flex justify-between text-rose-500 font-extrabold text-base pt-2 border-t border-border">
+                  <span>Balance Due</span>
+                  <span>৳{booking.dueAmount}</span>
+                </div>
+              ) : (
+                <div className="flex justify-between text-emerald-600 font-extrabold text-base pt-2 border-t border-border">
+                  <span>Balance Due</span>
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="h-4 w-4" /> Fully Paid
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>

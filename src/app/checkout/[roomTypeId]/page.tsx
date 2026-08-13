@@ -7,6 +7,7 @@ import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { couponsApi, CouponValidationResult } from "@/lib/api/coupons";
 import { bookingsApi } from "@/lib/api/bookings";
 import { paymentsApi } from "@/lib/api/payments";
+import { useAuth } from "@/lib/context/AuthContext";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Loading } from "@/components/ui/Loading";
@@ -15,6 +16,7 @@ import { AlertCircle, CheckCircle2, Ticket, CreditCard, ShieldCheck, ArrowLeft }
 function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user } = useAuth();
 
   const [room, setRoom] = useState<RoomType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,6 +68,8 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
   const discountAmount = appliedCoupon ? appliedCoupon.discountAmount : 0;
   const finalTotal = Math.max(0, subtotal - discountAmount);
 
+  const availableRoom = room?.rooms?.find((r) => r.status === "AVAILABLE");
+
   const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!couponCode.trim()) return;
@@ -86,17 +90,36 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
 
   const handleConfirmAndPay = async () => {
     setError(null);
+
+    if (!availableRoom) {
+      setError("No available room for this room type. Please choose another room.");
+      return;
+    }
+
+    if (!user?.name) {
+      setError("Please log in to complete your reservation.");
+      return;
+    }
+
     setSubmitting(true);
     try {
       // Step 1: Create Booking
       const bookingRes = await bookingsApi.create({
+        roomId: availableRoom.id,
         checkIn,
         checkOut,
-        numAdults: Number(numAdults),
-        numChildren: Number(numChildren),
-        roomTypeId,
+        adults: Number(numAdults),
+        children: Number(numChildren),
         couponCode: appliedCoupon ? appliedCoupon.code : undefined,
-        specialRequests: specialRequests || undefined,
+        specialRequest: specialRequests.trim() || undefined,
+        guests: [
+          {
+            fullName: user.name,
+            email: user.email,
+            phone: user.phone ?? null,
+            isPrimary: true,
+          },
+        ],
       });
 
       if (!bookingRes.data?.id) {
@@ -173,6 +196,13 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
               <Badge variant="primary" className="mb-1">{room.bedType} BED</Badge>
               <h2 className="text-xl font-bold text-foreground">{room.name}</h2>
               <p className="text-xs text-muted-foreground mt-0.5">Max {room.maxGuests} Guests • ৳{room.basePrice} / night</p>
+              <p className="text-xs mt-1">
+                {availableRoom ? (
+                  <span className="font-semibold text-emerald-600">Room {availableRoom.roomNumber} available • Floor {availableRoom.floor ?? "-"}</span>
+                ) : (
+                  <span className="font-semibold text-rose-600">No rooms available for the selected dates</span>
+                )}
+              </p>
             </div>
           </div>
 
@@ -311,13 +341,13 @@ function BookingCreationContent({ roomTypeId }: { roomTypeId: string }) {
 
             <Button
               onClick={handleConfirmAndPay}
-              disabled={submitting}
+              disabled={submitting || !availableRoom}
               variant="primary"
               size="lg"
               className="w-full font-bold gap-2 shadow-lg"
             >
               <CreditCard className="h-5 w-5" />
-              <span>{submitting ? "Processing..." : "Proceed to Stripe Checkout"}</span>
+              <span>{submitting ? "Processing..." : !availableRoom ? "No Rooms Available" : "Proceed to Stripe Checkout"}</span>
             </Button>
 
             <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1">

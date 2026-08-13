@@ -17,6 +17,10 @@ import {
   X,
   LogOut,
   LayoutDashboard,
+  Home,
+  BedDouble,
+  Palmtree,
+  Globe,
 } from "lucide-react";
 
 const customerNavItems = [
@@ -27,6 +31,12 @@ const customerNavItems = [
   { label: "Reviews", href: "/customer/reviews", icon: Star },
   { label: "Notifications", href: "/customer/notifications", icon: Bell },
   { label: "Profile Settings", href: "/customer/profile", icon: User },
+];
+
+const publicNavItems = [
+  { label: "Home", href: "/", icon: Home },
+  { label: "Rooms & Suites", href: "/rooms", icon: BedDouble },
+  { label: "Facilities", href: "/facilities", icon: Palmtree },
 ];
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
@@ -68,12 +78,16 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           `}
         >
           <div className="h-16 px-6 flex items-center justify-between border-b border-border">
-            <Link href="/customer/dashboard" className="flex items-center gap-2.5">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm">
+            <Link
+              href="/"
+              title="Back to ResortStay public website"
+              className="group flex items-center gap-2.5 cursor-pointer"
+            >
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm transition-all duration-300 group-hover:bg-primary-hover group-hover:scale-105 group-hover:shadow-md group-active:scale-95">
                 R
               </div>
               <div>
-                <span className="font-extrabold text-foreground tracking-tight block text-base leading-none">
+                <span className="font-extrabold text-foreground tracking-tight block text-base leading-none transition-colors duration-200 group-hover:text-primary">
                   ResortStay
                 </span>
                 <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
@@ -84,7 +98,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1 rounded-md text-muted-foreground hover:bg-muted"
+              className="lg:hidden p-1 rounded-md text-muted-foreground hover:bg-muted cursor-pointer transition-colors duration-200 active:scale-95"
               aria-label="Close navigation menu"
             >
               <X className="h-5 w-5" />
@@ -113,11 +127,12 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`
-                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all
+                    flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium cursor-pointer
+                    transition-all duration-200 ease-in-out active:scale-[0.97]
                     ${
                       active
                         ? "bg-primary text-white font-semibold shadow-sm"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted hover:translate-x-0.5"
                     }
                   `}
                 >
@@ -128,13 +143,26 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
             })}
           </nav>
 
-          <div className="p-4 border-t border-border">
-            <Link
-              href="/"
-              className="flex items-center justify-center gap-2 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors py-2 rounded-lg hover:bg-muted"
-            >
-              ← Back to Public Website
-            </Link>
+          {/* Public website links */}
+          <div className="p-4 border-t border-border space-y-1">
+            <span className="text-xs font-semibold text-muted-foreground uppercase px-3 py-1 flex items-center gap-1.5">
+              <Globe className="h-3.5 w-3.5" />
+              Explore ResortStay
+            </span>
+            {publicNavItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground cursor-pointer transition-all duration-200 ease-in-out hover:text-foreground hover:bg-muted hover:translate-x-0.5 active:scale-[0.97]"
+                >
+                  <Icon className="h-4 w-4 text-muted-foreground" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </aside>
 
@@ -145,7 +173,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg text-muted-foreground hover:bg-muted"
+                className="lg:hidden p-2 rounded-lg text-muted-foreground hover:bg-muted cursor-pointer transition-colors duration-200 active:scale-95"
                 aria-label="Open navigation menu"
               >
                 <Menu className="h-5 w-5" />

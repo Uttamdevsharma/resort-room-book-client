@@ -29,7 +29,7 @@ export function RoleLayout({ children, allowedRoles, roleName }: RoleLayoutProps
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="lg:hidden p-2 rounded-lg text-muted-foreground hover:bg-muted"
+                className="lg:hidden p-2 rounded-lg text-muted-foreground hover:bg-muted cursor-pointer transition-colors duration-200 active:scale-95"
                 aria-label="Open navigation menu"
               >
                 <Menu className="h-5 w-5" />

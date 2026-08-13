@@ -1,33 +1,18 @@
 import { apiRequest } from "./client";
 
-export interface BookingRoom {
-  id: string;
-  roomTypeId: string;
-  roomId?: string | null;
-  pricePerNight: number;
-  roomType?: {
-    id: string;
-    name: string;
-    bedType: string;
-    media?: { url: string }[];
-  };
-  room?: {
-    id: string;
-    roomNumber: string;
-  };
-}
-
 export interface Booking {
   id: string;
   bookingNumber: string;
   customerId: string;
+  roomId: string;
+  roomTypeId: string;
   checkIn: string;
   checkOut: string;
-  numGuests: number;
-  numAdults: number;
-  numChildren: number;
-  totalNights: number;
-  subtotalAmount: number;
+  adults: number;
+  children: number;
+  nights: number;
+  pricePerNight: number;
+  subtotal: number;
   discountAmount: number;
   taxAmount: number;
   totalAmount: number;
@@ -36,9 +21,8 @@ export interface Booking {
   bookingStatus: "PENDING_PAYMENT" | "CONFIRMED" | "CHECKED_IN" | "CHECKED_OUT" | "CANCELLED" | "NO_SHOW";
   paymentStatus: "PENDING" | "PAID" | "PARTIALLY_PAID" | "FAILED" | "CANCELLED" | "REFUNDED" | "PARTIALLY_REFUNDED";
   couponCode?: string | null;
-  specialRequests?: string | null;
+  specialRequest?: string | null;
   cancellationReason?: string | null;
-  cancelledAt?: string | null;
   createdAt: string;
   updatedAt: string;
   customer?: {
@@ -47,19 +31,44 @@ export interface Booking {
     email: string;
     phone?: string | null;
   };
-  bookingRooms?: BookingRoom[];
+  room?: {
+    id: string;
+    roomNumber: string;
+    floor?: number | null;
+    roomType?: {
+      id: string;
+      name: string;
+      slug: string;
+      basePrice: number;
+    };
+  };
+  roomType?: {
+    id: string;
+    name: string;
+    slug: string;
+    basePrice: number;
+  };
+  guests?: any[];
   payments?: any[];
   refunds?: any[];
 }
 
+export interface CreateBookingGuest {
+  fullName: string;
+  phone?: string | null;
+  email?: string | null;
+  isPrimary?: boolean;
+}
+
 export interface CreateBookingPayload {
+  roomId: string;
   checkIn: string;
   checkOut: string;
-  numAdults: number;
-  numChildren?: number;
-  roomTypeId: string;
+  adults: number;
+  children?: number;
   couponCode?: string;
-  specialRequests?: string;
+  specialRequest?: string;
+  guests: CreateBookingGuest[];
 }
 
 export const bookingsApi = {
