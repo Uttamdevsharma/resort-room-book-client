@@ -62,10 +62,10 @@ export function CouponsAdminContent() {
     setCode(item.code);
     setDiscountType(item.discountType);
     setDiscountValue(item.discountValue);
-    setMinBookingAmount(String(item.minBookingAmount || ""));
-    setMaxDiscountAmount(String(item.maxDiscountAmount || ""));
-    setValidFrom(item.validFrom ? item.validFrom.split("T")[0] : "");
-    setValidUntil(item.validUntil ? item.validUntil.split("T")[0] : "");
+    setMinBookingAmount(String(item.minimumAmount ?? ""));
+    setMaxDiscountAmount(String(item.maximumDiscount ?? ""));
+    setValidFrom(item.startDate ? item.startDate.split("T")[0] : "");
+    setValidUntil(item.endDate ? item.endDate.split("T")[0] : "");
     setUsageLimit(String(item.usageLimit || ""));
     setStatus(item.status);
     setModalOpen(true);
@@ -79,10 +79,10 @@ export function CouponsAdminContent() {
         code: code.toUpperCase(),
         discountType,
         discountValue: Number(discountValue),
-        minBookingAmount: minBookingAmount ? Number(minBookingAmount) : undefined,
-        maxDiscountAmount: maxDiscountAmount ? Number(maxDiscountAmount) : undefined,
-        validFrom: validFrom ? new Date(validFrom).toISOString() : undefined,
-        validUntil: validUntil ? new Date(validUntil).toISOString() : undefined,
+        minimumAmount: minBookingAmount ? Number(minBookingAmount) : undefined,
+        maximumDiscount: maxDiscountAmount ? Number(maxDiscountAmount) : undefined,
+        startDate: validFrom ? new Date(validFrom).toISOString() : undefined,
+        endDate: validUntil ? new Date(validUntil).toISOString() : undefined,
         usageLimit: usageLimit ? Number(usageLimit) : undefined,
         status,
       };
@@ -163,13 +163,13 @@ export function CouponsAdminContent() {
                       </Button>
                     </td>
                     <td className="p-4 font-semibold text-primary">{getDiscountLabel(c)}</td>
-                    <td className="p-4 text-xs text-muted-foreground">{c.minBookingAmount ? `$${c.minBookingAmount}` : "&mdash;"}</td>
-                    <td className="p-4 text-xs text-muted-foreground">{c.maxDiscountAmount ? `$${c.maxDiscountAmount}` : "&mdash;"}</td>
+                    <td className="p-4 text-xs text-muted-foreground">{c.minimumAmount ? `$${c.minimumAmount}` : "&mdash;"}</td>
+                    <td className="p-4 text-xs text-muted-foreground">{c.maximumDiscount ? `$${c.maximumDiscount}` : "&mdash;"}</td>
                     <td className="p-4 text-xs text-muted-foreground">
-                      {c.validFrom ? new Date(c.validFrom).toLocaleDateString() : "Any"} &mdash;
-                      {c.validUntil ? new Date(c.validUntil).toLocaleDateString() : "Any"}
+                      {c.startDate ? new Date(c.startDate).toLocaleDateString() : "Any"} &mdash;
+                      {c.endDate ? new Date(c.endDate).toLocaleDateString() : "Any"}
                     </td>
-                    <td className="p-4 font-medium text-foreground">{c.usedCount} / {c.usageLimit || "&infin;"}</td>
+                    <td className="p-4 font-medium text-foreground">{c._count?.usages ?? 0} / {c.usageLimit || "&infin;"}</td>
                     <td className="p-4">
                       <Badge variant={c.status === "ACTIVE" ? "success" : "danger"}>{c.status}</Badge>
                     </td>

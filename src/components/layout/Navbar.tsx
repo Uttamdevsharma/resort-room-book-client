@@ -28,8 +28,7 @@ export function Navbar() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDarkMode = savedTheme === "dark" || (!savedTheme && prefersDark);
+    const isDarkMode = savedTheme !== "light";
     setIsDark(isDarkMode);
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, []);

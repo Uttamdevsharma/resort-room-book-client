@@ -7,7 +7,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { AboutSection, FacilityDirectory, GallerySection } from "@/components/home";
+import { AboutSection, FacilityDirectory, GallerySection, OffersSection } from "@/components/home";
 import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { facilitiesApi, Facility } from "@/lib/api/facilities";
 import { reviewsApi, Review } from "@/lib/api/reviews";
@@ -296,6 +296,9 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ============ Offers & Packages ============ */}
+      <OffersSection />
 
       {/* ============ Facilities ============ */}
       <section id="facilities" className="py-20 lg:py-28 scroll-mt-16">

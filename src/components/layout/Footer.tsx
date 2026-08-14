@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react";
+import { MapPin, Phone, Mail, ArrowUpRight, ShieldCheck } from "lucide-react";
 
 const footerLinks = {
   company: [
@@ -24,7 +24,6 @@ const footerLinks = {
     { label: "Privacy Policy", href: "/privacy" },
     { label: "Terms of Service", href: "/terms" },
     { label: "Cookie Policy", href: "/cookies" },
-    { label: "Accessibility", href: "/accessibility" },
   ],
 };
 
@@ -78,173 +77,134 @@ const amenities = [
   "Concierge",
 ];
 
+const navColumns: { heading: string; links: { label: string; href: string }[]; aria: string }[] = [
+  { heading: "Explore", links: footerLinks.explore, aria: "Explore links" },
+  { heading: "Support", links: footerLinks.support, aria: "Support links" },
+  { heading: "Company", links: footerLinks.company, aria: "Company links" },
+  { heading: "Legal", links: footerLinks.legal, aria: "Legal links" },
+];
+
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-navy-950 text-slate-300" role="contentinfo">
-      <div className="h-1 w-full bg-gradient-to-r from-primary via-blue-600 to-indigo-600" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(37,99,235,0.12),transparent_55%)]" />
-      <div className="container relative py-14 lg:py-16">
-        <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4 lg:grid-cols-6">
-          {/* Brand column */}
-          <div className="col-span-2 lg:col-span-2">
-            <Link
-              href="/"
-              className="group mb-4 inline-flex cursor-pointer items-center gap-2 text-xl font-extrabold tracking-tight text-white"
-              aria-label="ResortStay - Home"
-            >
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white shadow-lg shadow-blue-950/50 transition-all duration-300 group-hover:scale-105 group-hover:shadow-blue-900/60">
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <span>ResortStay</span>
-            </Link>
-            <p className="mb-5 max-w-xs text-sm leading-relaxed text-slate-400">
+    <footer className="relative border-t border-border bg-background text-foreground" role="contentinfo">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,color-mix(in_srgb,var(--primary)_8%,transparent),transparent_55%)]" />
+
+      <div className="container relative pt-14 pb-10 sm:pt-16 lg:pt-20 lg:pb-12">
+        {/* Top row: logo + tagline on the left, social icons on the top-right */}
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <Link
+            href="/"
+            className="group inline-flex w-fit cursor-pointer items-center gap-3"
+            aria-label="ResortStay - Home"
+          >
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:bg-primary-hover group-hover:shadow-md group-active:scale-95">
+              <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <span className="text-xl font-extrabold tracking-tight text-foreground transition-colors duration-200 group-hover:text-primary">
+              ResortStay
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-2.5">
+            {socials.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Follow us on ${social.label}`}
+                className="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/10 hover:text-primary hover:shadow-md active:scale-90"
+              >
+                {social.icon}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* 5-column layout: Brand, Explore, Support, Company, Legal */}
+        <div className="mt-12 grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-4 lg:mt-14 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] lg:gap-x-12 xl:gap-x-16">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-4 lg:col-span-1 lg:max-w-xs">
+            <p className="text-sm leading-relaxed text-muted-foreground">
               Your perfect getaway starts here. Discover luxury accommodations,
               exceptional service, and unforgettable experiences at our premium resorts worldwide.
             </p>
 
-            <ul className="space-y-2.5 text-sm">
-              <li className="flex items-center gap-2 text-slate-400">
-                <MapPin className="h-4 w-4 flex-shrink-0 text-blue-400" />
+            <ul className="mt-6 flex flex-wrap gap-2" role="list">
+              {amenities.map((amenity) => (
+                <li key={amenity}>
+                  <span className="inline-flex items-center rounded-full border border-border bg-card px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors duration-200 hover:border-primary/30 hover:bg-primary/10 hover:text-primary">
+                    {amenity}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {navColumns.map((column) => (
+            <nav key={column.heading} aria-label={column.aria}>
+              <h3 className="mb-5 text-sm font-semibold text-foreground">{column.heading}</h3>
+              <ul className="space-y-3" role="list">
+                {column.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="group inline-flex cursor-pointer items-center gap-1 text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
+                    >
+                      <span className="transition-transform duration-200 group-hover:-translate-x-0.5">
+                        {link.label}
+                      </span>
+                      <ArrowUpRight className="h-3.5 w-3.5 -translate-x-1 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        </div>
+
+        {/* Divider + bottom row: contact info, copyright, Secure & Trusted */}
+        <div className="mt-12 border-t border-border pt-8 lg:mt-14 lg:pt-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <ul
+              className="flex flex-col gap-2.5 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2"
+              role="list"
+            >
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <MapPin className="h-4 w-4 flex-shrink-0 text-primary" />
                 <span>123 Palm Beach Road, Coastal Bay</span>
               </li>
               <li>
-                <a href="tel:+18001234567" className="inline-flex cursor-pointer items-center gap-2 text-slate-400 transition-colors duration-200 hover:text-white">
-                  <Phone className="h-4 w-4 flex-shrink-0 text-blue-400" />
+                <a
+                  href="tel:+18001234567"
+                  className="inline-flex cursor-pointer items-center gap-2 text-muted-foreground transition-colors duration-200 hover:text-primary"
+                >
+                  <Phone className="h-4 w-4 flex-shrink-0 text-primary" />
                   +1 (800) 123-4567
                 </a>
               </li>
               <li>
-                <a href="mailto:hello@resortstay.com" className="inline-flex cursor-pointer items-center gap-2 text-slate-400 transition-colors duration-200 hover:text-white">
-                  <Mail className="h-4 w-4 flex-shrink-0 text-blue-400" />
+                <a
+                  href="mailto:hello@resortstay.com"
+                  className="inline-flex cursor-pointer items-center gap-2 text-muted-foreground transition-colors duration-200 hover:text-primary"
+                >
+                  <Mail className="h-4 w-4 flex-shrink-0 text-primary" />
                   hello@resortstay.com
                 </a>
               </li>
             </ul>
 
-            <div className="mt-6 flex flex-wrap gap-2">
-              {amenities.map((amenity) => (
-                <span
-                  key={amenity}
-                  className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-400 transition-colors duration-200 hover:bg-primary/20 hover:text-blue-100"
-                >
-                  {amenity}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <nav aria-label="Explore links">
-            <h3 className="mb-4 flex items-center gap-1.5 font-semibold text-white">
-              Explore
-              <ArrowUpRight className="h-3.5 w-3.5 text-blue-400" />
-            </h3>
-            <ul className="space-y-3" role="list">
-              {footerLinks.explore.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="group inline-flex cursor-pointer items-center gap-1 text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    <span className="transition-transform duration-200 group-hover:translate-x-0.5">{link.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Support links">
-            <h3 className="mb-4 font-semibold text-white">Support</h3>
-            <ul className="space-y-3" role="list">
-              {footerLinks.support.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="group inline-flex cursor-pointer items-center gap-1 text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    <span className="transition-transform duration-200 group-hover:translate-x-0.5">{link.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Company links">
-            <h3 className="mb-4 font-semibold text-white">Company</h3>
-            <ul className="space-y-3" role="list">
-              {footerLinks.company.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="group inline-flex cursor-pointer items-center gap-1 text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    <span className="transition-transform duration-200 group-hover:translate-x-0.5">{link.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav aria-label="Legal links">
-            <h3 className="mb-4 font-semibold text-white">Legal</h3>
-            <ul className="space-y-3" role="list">
-              {footerLinks.legal.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="group inline-flex cursor-pointer items-center gap-1 text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-                  >
-                    <span className="transition-transform duration-200 group-hover:translate-x-0.5">{link.label}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-
-        <div className="mt-12 border-t border-white/10 pt-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               &copy; {currentYear} ResortStay. All rights reserved.
             </p>
 
-            <div className="flex items-center gap-2">
-              {socials.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-white/15 text-slate-400 transition-all duration-200 ease-in-out hover:-translate-y-0.5 hover:border-transparent hover:bg-primary hover:text-white hover:shadow-lg hover:shadow-blue-950/50 active:scale-90"
-                  aria-label={`Follow us on ${social.label}`}
-                >
-                  {social.icon}
-                </a>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-5">
-              <Link
-                href="/privacy"
-                className="cursor-pointer text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms"
-                className="cursor-pointer text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                href="/cookies"
-                className="cursor-pointer text-sm text-slate-400 transition-colors duration-200 hover:text-white"
-              >
-                Cookie Settings
-              </Link>
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">
+              <ShieldCheck className="h-4 w-4 text-primary" />
+              Secure &amp; Trusted
             </div>
           </div>
         </div>

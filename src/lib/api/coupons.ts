@@ -14,16 +14,31 @@ export interface Coupon {
   code: string;
   discountType: "PERCENTAGE" | "FIXED";
   discountValue: number;
-  minBookingAmount?: number | null;
-  maxDiscountAmount?: number | null;
-  validFrom?: string | null;
-  validUntil?: string | null;
+  minimumAmount?: number | null;
+  maximumDiscount?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
   usageLimit?: number | null;
-  usedCount: number;
   status: "ACTIVE" | "INACTIVE";
+  _count?: { usages: number };
+}
+
+export interface PublicCouponOffer {
+  id: string;
+  code: string;
+  discountType: "PERCENTAGE" | "FIXED";
+  discountValue: number;
+  minimumAmount?: number | null;
+  maximumDiscount?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
 }
 
 export const couponsApi = {
+  async listPublicOffers(limit = 6) {
+    return apiRequest<PublicCouponOffer[]>(`/coupons/offers?limit=${limit}`);
+  },
+
   async validateCoupon(code: string, subtotal: number, roomTypeId?: string) {
     return apiRequest<CouponValidationResult>("/coupons/validate", {
       method: "POST",
