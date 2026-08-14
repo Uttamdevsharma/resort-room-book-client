@@ -5,8 +5,8 @@ import { refundsApi, RefundRecord } from "@/lib/api/refunds";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { Pagination } from "@/components/ui/Pagination";
+import { RefundsSkeleton } from "@/components/dashboard/skeletons";
 import { Plus, Search, RefreshCw, CreditCard } from "lucide-react";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 
@@ -125,7 +125,7 @@ export function RefundsAdminContent() {
       </form>
 
       {isLoading ? (
-        <Loading text="Loading refunds ledger..." />
+        <RefundsSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

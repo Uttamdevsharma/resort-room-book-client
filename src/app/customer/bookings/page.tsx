@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { bookingsApi, Booking } from "@/lib/api/bookings";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
+import { MyBookingsSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Pagination } from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
@@ -66,7 +66,7 @@ export default function MyBookingsPage() {
       </div>
 
       {isLoading ? (
-        <Loading text="Retrieving your reservations..." />
+        <MyBookingsSkeleton />
       ) : bookings.length === 0 ? (
         <EmptyState
           title="No Bookings Found"

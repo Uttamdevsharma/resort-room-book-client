@@ -8,7 +8,7 @@ import { paymentsApi } from "@/lib/api/payments";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
+import { BookingDetailsSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { Calendar, CreditCard, XCircle, ArrowLeft, CheckCircle2, AlertTriangle, ShieldCheck, Ticket } from "lucide-react";
 
 export default function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -100,7 +100,7 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
   };
 
   if (isLoading) {
-    return <Loading text="Loading booking record..." />;
+    return <BookingDetailsSkeleton />;
   }
 
   if (!booking) {

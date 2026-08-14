@@ -7,7 +7,7 @@ import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
+import { ReviewsSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Star, Plus, AlertCircle } from "lucide-react";
 
@@ -88,7 +88,7 @@ export default function CustomerReviewsPage() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading your reviews..." />
+        <ReviewsSkeleton />
       ) : reviews.length === 0 ? (
         <EmptyState title="No Reviews Submitted" description="Share your stay experience to help future guests!" />
       ) : (
@@ -103,7 +103,7 @@ export default function CustomerReviewsPage() {
                 </div>
                 <Badge variant={getStatusBadgeVariant(r.status)}>{r.status}</Badge>
               </div>
-              <h3 className="font-bold text-foreground text-base">{r.title || "Resort Stay Review"}</h3>
+              <h3 className="font-bold text-foreground text-base">{r.title || "CoxBay Resort Review"}</h3>
               <p className="text-sm text-muted-foreground italic">"{r.comment}"</p>
               <div className="text-xs text-muted-foreground pt-2 border-t border-border flex justify-between">
                 <span>{r.roomType?.name || "Room Suite"}</span>

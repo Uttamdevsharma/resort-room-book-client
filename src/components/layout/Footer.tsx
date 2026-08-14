@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { MapPin, Phone, Mail, ArrowUpRight, ShieldCheck } from "lucide-react";
+import { LogoMark } from "@/components/brand/LogoMark";
+import { Wordmark } from "@/components/brand/Wordmark";
 
 const footerLinks = {
   company: [
@@ -97,16 +99,12 @@ export function Footer() {
           <Link
             href="/"
             className="group inline-flex w-fit cursor-pointer items-center gap-3"
-            aria-label="ResortStay - Home"
+            aria-label="CoxBay Resort - Home"
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary text-white shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:bg-primary-hover group-hover:shadow-md group-active:scale-95">
-              <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-              </svg>
+              <LogoMark className="h-6 w-6" />
             </div>
-            <span className="text-xl font-extrabold tracking-tight text-foreground transition-colors duration-200 group-hover:text-primary">
-              ResortStay
-            </span>
+            <Wordmark tone="foreground" size="lg" />
           </Link>
 
           <div className="flex items-center gap-2.5">
@@ -189,17 +187,17 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:hello@resortstay.com"
+                  href="mailto:hello@coxbayresort.com"
                   className="inline-flex cursor-pointer items-center gap-2 text-muted-foreground transition-colors duration-200 hover:text-primary"
                 >
                   <Mail className="h-4 w-4 flex-shrink-0 text-primary" />
-                  hello@resortstay.com
+                  hello@coxbayresort.com
                 </a>
               </li>
             </ul>
 
             <p className="text-sm text-muted-foreground">
-              &copy; {currentYear} ResortStay. All rights reserved.
+              &copy; {currentYear} CoxBay Resort. All rights reserved.
             </p>
 
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1.5 text-xs font-medium text-muted-foreground shadow-sm">

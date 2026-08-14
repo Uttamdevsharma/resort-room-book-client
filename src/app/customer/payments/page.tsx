@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { paymentsApi, PaymentRecord } from "@/lib/api/payments";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
+import { PaymentsSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { CreditCard, Calendar } from "lucide-react";
 
@@ -33,7 +33,7 @@ export default function CustomerPaymentsPage() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading payment records..." />
+        <PaymentsSkeleton />
       ) : payments.length === 0 ? (
         <EmptyState title="No Payment History" description="You have no recorded payments yet." />
       ) : (

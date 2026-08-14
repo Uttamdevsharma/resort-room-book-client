@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import { customersApi } from "@/lib/api/customers";
 import { useAuth } from "@/lib/context/AuthContext";
 import { Button } from "@/components/ui/Button";
+import { ProfileSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { User, Phone, Mail, Lock, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function CustomerProfilePage() {
   const { user, refreshUser } = useAuth();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   // Profile Form
   const [name, setName] = useState(user?.name || "");
@@ -20,6 +23,11 @@ export default function CustomerProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [updatingPass, setUpdatingPass] = useState(false);
   const [passMsg, setPassMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -61,6 +69,10 @@ export default function CustomerProfilePage() {
 
   return (
     <div className="space-y-8 max-w-2xl">
+      {isLoading ? (
+        <ProfileSkeleton />
+      ) : (
+        <>
       <div>
         <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Profile & Security</h1>
         <p className="text-sm text-muted-foreground mt-1">Manage your account information and login security</p>
@@ -188,6 +200,8 @@ export default function CustomerProfilePage() {
           </Button>
         </form>
       </div>
+        </>
+      )}
     </div>
   );
 }

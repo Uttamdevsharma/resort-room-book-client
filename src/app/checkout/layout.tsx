@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { LogoMark } from "@/components/brand/LogoMark";
+import { Wordmark } from "@/components/brand/Wordmark";
 
 export default function CheckoutLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -13,16 +15,12 @@ export default function CheckoutLayout({ children }: { children: React.ReactNode
           <div className="container flex h-14 items-center justify-between gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-foreground hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
               <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm">
-                <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                </svg>
+                <LogoMark className="h-5 w-5" />
               </div>
-              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                ResortStay
-              </span>
+              <Wordmark tone="gradient" size="md" />
             </Link>
 
             <Link

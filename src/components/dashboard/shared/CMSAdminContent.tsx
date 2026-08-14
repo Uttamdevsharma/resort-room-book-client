@@ -5,8 +5,8 @@ import { cmsApi, HomepageSection } from "@/lib/api/cms";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { Plus, Edit2, Trash2, GripVertical, Eye, LayoutDashboard } from "lucide-react";
+import { CMSSkeleton } from "@/components/dashboard/skeletons";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 
 const SECTION_TYPES = [
@@ -167,7 +167,7 @@ export function CMSAdminContent() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading homepage sections..." />
+        <CMSSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="divide-y divide-border">

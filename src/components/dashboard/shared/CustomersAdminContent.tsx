@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { customersApi, CustomerUser } from "@/lib/api/customers";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Loading } from "@/components/ui/Loading";
 import { Users, Search, ShieldAlert } from "lucide-react";
+import { CustomersSkeleton } from "@/components/dashboard/skeletons";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 import { useAuth } from "@/lib/context/AuthContext";
 
@@ -77,7 +77,7 @@ export function CustomersAdminContent() {
       </form>
 
       {isLoading ? (
-        <Loading text="Loading customers..." />
+        <CustomersSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

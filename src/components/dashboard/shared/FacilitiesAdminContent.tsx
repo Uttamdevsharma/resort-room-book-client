@@ -5,8 +5,8 @@ import { facilitiesApi, Facility } from "@/lib/api/facilities";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { Plus, Edit2, Trash2, Palmtree } from "lucide-react";
+import { FacilitiesSkeleton } from "@/components/dashboard/skeletons";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 
 export function FacilitiesAdminContent() {
@@ -97,7 +97,7 @@ export function FacilitiesAdminContent() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading facilities..." />
+        <FacilitiesSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

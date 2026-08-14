@@ -8,8 +8,8 @@ import { roomsApi, PhysicalRoom } from "@/lib/api/rooms";
 import { paymentsApi, PaymentRecord } from "@/lib/api/payments";
 import { useAuth } from "@/lib/context/AuthContext";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
+import { DashboardOverviewSkeleton } from "@/components/dashboard/skeletons";
 import {
   CalendarCheck,
   BedDouble,
@@ -18,7 +18,11 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-export function DashboardOverviewContent() {
+interface DashboardOverviewContentProps {
+  showHeroBanner?: boolean;
+}
+
+export function DashboardOverviewContent({ showHeroBanner = true }: DashboardOverviewContentProps) {
   const { user, roles } = useAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
@@ -58,24 +62,30 @@ export function DashboardOverviewContent() {
 
   return (
     <div className="space-y-8">
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-primary to-blue-700 text-white shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <span className="text-xs font-extrabold uppercase tracking-wider text-primary-light">
-            Staff Workspace
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold mt-1">Welcome back, {user?.name}!</h1>
-          <p className="text-sm text-primary-light mt-1">
-            Role: <span className="font-semibold text-white">{roles.join(", ")}</span>
-          </p>
+      {showHeroBanner && (
+        <div className="p-6 rounded-2xl bg-gradient-to-r from-primary to-blue-700 text-white shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <span className="text-xs font-extrabold uppercase tracking-wider text-primary-light">
+              Staff Workspace
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-extrabold mt-1">Welcome back, {user?.name}!</h1>
+            <p className="text-sm text-primary-light mt-1">
+              Role: <span className="font-semibold text-white">{roles.join(", ")}</span>
+            </p>
+          </div>
+          <Link href="/dashboard/bookings">
+            <Button className="bg-white text-primary hover:bg-zinc-100 font-bold gap-2">
+              <span>Manage Bookings</span>
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
-        <Link href="/dashboard/bookings">
-          <Button className="bg-white text-primary hover:bg-zinc-100 font-bold gap-2">
-            <span>Manage Bookings</span>
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
+      )}
 
+      {isLoading ? (
+        <DashboardOverviewSkeleton />
+      ) : (
+        <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="p-6 rounded-2xl bg-card border border-border shadow-xs">
           <div className="flex justify-between items-start">
@@ -132,10 +142,7 @@ export function DashboardOverviewContent() {
           </Link>
         </div>
 
-        {isLoading ? (
-          <Loading text="Fetching system records..." />
-        ) : (
-          <div className="overflow-x-auto">
+        <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead className="bg-muted/40 text-xs uppercase text-muted-foreground font-semibold">
                 <tr>
@@ -163,8 +170,9 @@ export function DashboardOverviewContent() {
               </tbody>
             </table>
           </div>
-        )}
       </div>
+        </>
+      )}
     </div>
   );
 }

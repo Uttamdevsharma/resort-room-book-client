@@ -38,7 +38,7 @@ const highlights = [
   {
     icon: Umbrella,
     title: "Private Beach Access",
-    text: "A quiet stretch of golden sand reserved exclusively for ResortStay guests.",
+    text: "A quiet stretch of golden sand reserved exclusively for CoxBay Resort guests.",
   },
   {
     icon: ChefHat,
@@ -139,11 +139,11 @@ const galleryItems = [
 function FacilitiesHero() {
   return (
     <section className="relative flex min-h-[72svh] items-center overflow-hidden bg-navy-950">
-      {/* Background image */}
-      <div className="absolute inset-0">
+      {/* Background image — starts directly below the fixed navbar */}
+      <div className="absolute inset-x-0 top-[4.5rem] bottom-0">
         <Image
           src={FACILITY_IMAGES.pool}
-          alt="ResortStay infinity pool framed by palms at dusk"
+          alt="CoxBay Resort infinity pool framed by palms at dusk"
           fill
           priority
           sizes="100vw"
@@ -158,13 +158,8 @@ function FacilitiesHero() {
       {/* Content */}
       <div className="container relative z-10 flex flex-1 flex-col justify-center pt-32 pb-16 sm:pt-36">
         <div className="max-w-2xl">
-          <p className="animate-fade-up inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-blue-200">
-            <span className="h-px w-8 bg-blue-200/60" aria-hidden="true" />
-            Resort Facilities
-          </p>
-
           <h1
-            className="animate-fade-up mt-5 font-display text-4xl font-medium leading-[1.08] tracking-tight text-white text-balance sm:text-5xl lg:text-6xl"
+            className="animate-fade-up font-display text-4xl font-medium leading-[1.08] tracking-tight text-white text-balance sm:text-5xl lg:text-6xl"
             style={{ animationDelay: "150ms" }}
           >
             Everything you need,{" "}
@@ -176,7 +171,7 @@ function FacilitiesHero() {
             style={{ animationDelay: "300ms" }}
           >
             From an oceanfront infinity pool to restorative spa rituals, every facility at
-            ResortStay is designed around calm, comfort, and slow, unhurried days.
+            CoxBay Resort is designed around calm, comfort, and slow, unhurried days.
           </p>
 
           <div
@@ -377,7 +372,7 @@ function ExperienceGallery() {
             A taste of resort life
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Wander through the spaces and rituals that make a ResortStay holiday feel
+            Wander through the spaces and rituals that make a CoxBay Resort holiday feel
             effortlessly unhurried.
           </p>
         </Reveal>

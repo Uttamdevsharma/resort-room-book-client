@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 import { useAuth } from "@/lib/context/AuthContext";
 import { Button } from "@/components/ui/Button";
+import { LogoMark } from "@/components/brand/LogoMark";
+import { Wordmark } from "@/components/brand/Wordmark";
 import {
   CalendarCheck,
   CreditCard,
@@ -16,7 +18,6 @@ import {
   Menu,
   X,
   LogOut,
-  LayoutDashboard,
   Home,
   BedDouble,
   Palmtree,
@@ -24,7 +25,6 @@ import {
 } from "lucide-react";
 
 const customerNavItems = [
-  { label: "Overview", href: "/customer/dashboard", icon: LayoutDashboard },
   { label: "My Bookings", href: "/customer/bookings", icon: CalendarCheck },
   { label: "Payments", href: "/customer/payments", icon: CreditCard },
   { label: "Refunds", href: "/customer/refunds", icon: Receipt },
@@ -50,12 +50,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
     router.push("/");
   };
 
-  const isActive = (href: string) => {
-    if (href === "/customer/dashboard") {
-      return pathname === "/customer/dashboard" || pathname === "/customer";
-    }
-    return pathname.startsWith(href);
-  };
+  const isActive = (href: string) => pathname.startsWith(href);
 
   return (
     <ProtectedRoute>
@@ -80,20 +75,13 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           <div className="h-16 px-6 flex items-center justify-between border-b border-border">
             <Link
               href="/"
-              title="Back to ResortStay public website"
+              title="Back to CoxBay Resort public website"
               className="group flex items-center gap-2.5 cursor-pointer"
             >
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm transition-all duration-300 group-hover:bg-primary-hover group-hover:scale-105 group-hover:shadow-md group-active:scale-95">
-                R
+              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm transition-all duration-300 group-hover:bg-primary-hover group-hover:scale-105 group-hover:shadow-md group-active:scale-95">
+                <LogoMark className="h-4 w-4" />
               </div>
-              <div>
-                <span className="font-extrabold text-foreground tracking-tight block text-base leading-none transition-colors duration-200 group-hover:text-primary">
-                  ResortStay
-                </span>
-                <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                  My Account
-                </span>
-              </div>
+              <Wordmark tone="foreground" size="sm" secondary="My Account" />
             </Link>
 
             <button
@@ -147,7 +135,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           <div className="p-4 border-t border-border space-y-1">
             <span className="text-xs font-semibold text-muted-foreground uppercase px-3 py-1 flex items-center gap-1.5">
               <Globe className="h-3.5 w-3.5" />
-              Explore ResortStay
+              Explore CoxBay Resort
             </span>
             {publicNavItems.map((item) => {
               const Icon = item.icon;

@@ -17,12 +17,14 @@ import {
   Ticket,
   Star,
   Layers,
-  ShieldCheck,
+  UserCog,
   X,
   Home,
   Globe,
 } from "lucide-react";
 import { useAuth } from "@/lib/context/AuthContext";
+import { LogoMark } from "@/components/brand/LogoMark";
+import { Wordmark } from "@/components/brand/Wordmark";
 
 interface NavItem {
   label: string;
@@ -122,9 +124,9 @@ const sidebarItems: NavItem[] = [
     roles: ["SUPER_ADMIN", "RESORT_MANAGER", "MARKETING_MANAGER"],
   },
   {
-    label: "RBAC & Roles",
-    href: "/dashboard/rbac",
-    icon: ShieldCheck,
+    label: "Staff Management",
+    href: "/dashboard/staff",
+    icon: UserCog,
     roles: ["SUPER_ADMIN"],
   },
 ];
@@ -189,17 +191,10 @@ export function DashboardSidebar({
       >
         <div className="h-16 px-6 flex items-center justify-between border-b border-border">
           <Link href={basePath} className="group flex items-center gap-2.5 cursor-pointer">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg shadow-sm transition-all duration-300 group-hover:bg-primary-hover group-hover:scale-105 group-hover:shadow-md group-active:scale-95">
-              R
+            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm transition-all duration-300 group-hover:bg-primary-hover group-hover:scale-105 group-hover:shadow-md group-active:scale-95">
+              <LogoMark className="h-4 w-4" />
             </div>
-            <div>
-              <span className="font-extrabold text-foreground tracking-tight block text-base leading-none transition-colors duration-200 group-hover:text-primary">
-                ResortStay
-              </span>
-              <span className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                Staff Portal
-              </span>
-            </div>
+            <Wordmark tone="foreground" size="sm" secondary="Staff Portal" />
           </Link>
 
           {onClose && (
@@ -255,7 +250,7 @@ export function DashboardSidebar({
         <div className="p-4 border-t border-border space-y-1">
           <span className="text-xs font-semibold text-muted-foreground uppercase px-3 py-1 flex items-center gap-1.5">
             <Globe className="h-3.5 w-3.5" />
-            Explore ResortStay
+            Explore CoxBay Resort
           </span>
           {publicNavItems.map((item) => {
             const Icon = item.icon;

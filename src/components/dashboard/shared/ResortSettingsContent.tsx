@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { resortApi, ResortSettings } from "@/lib/api/resort";
 import { Button } from "@/components/ui/Button";
-import { Loading } from "@/components/ui/Loading";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
+import { ResortSettingsSkeleton } from "@/components/dashboard/skeletons";
 import { Building2, Save, CheckCircle2, AlertCircle } from "lucide-react";
 
 export function ResortSettingsContent() {
   const [settings, setSettings] = useState<Partial<ResortSettings>>({
-    resortName: "ResortStay Luxury Resort & Spa",
+    resortName: "CoxBay Resort & Spa",
     tagline: "Your Private Paradise",
     description: "",
     address: "",
@@ -65,7 +65,7 @@ export function ResortSettingsContent() {
   };
 
   if (isLoading) {
-    return <Loading text="Loading resort configuration..." />;
+    return <ResortSettingsSkeleton />;
   }
 
   return (

@@ -110,6 +110,9 @@ export interface ListRoomTypesQuery {
   minPrice?: number;
   maxPrice?: number;
   maxGuests?: number;
+  viewType?: string;
+  amenities?: string;
+  sort?: string;
 }
 
 export const roomTypesApi = {

@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { reviewsApi, Review } from "@/lib/api/reviews";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Loading } from "@/components/ui/Loading";
 import { Pagination } from "@/components/ui/Pagination";
+import { ReviewsSkeleton } from "@/components/dashboard/skeletons";
 import { Star, Search, CheckCircle2, XCircle, MessageSquare } from "lucide-react";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 
@@ -96,7 +96,7 @@ export function ReviewsAdminContent() {
       </form>
 
       {isLoading ? (
-        <Loading text="Loading reviews..." />
+        <ReviewsSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

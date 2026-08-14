@@ -5,8 +5,8 @@ import { couponsApi, Coupon } from "@/lib/api/coupons";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { Plus, Edit2, Trash2, Ticket, Copy } from "lucide-react";
+import { CouponsSkeleton } from "@/components/dashboard/skeletons";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 
 export function CouponsAdminContent() {
@@ -136,7 +136,7 @@ export function CouponsAdminContent() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading coupons..." />
+        <CouponsSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

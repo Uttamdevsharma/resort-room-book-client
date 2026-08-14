@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { notificationsApi, NotificationItem } from "@/lib/api/notifications";
 import { Button } from "@/components/ui/Button";
-import { Loading } from "@/components/ui/Loading";
+import { NotificationsSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Bell, CheckCheck } from "lucide-react";
 
@@ -51,7 +51,7 @@ export default function NotificationsPage() {
       </div>
 
       {isLoading ? (
-        <Loading text="Checking notifications..." />
+        <NotificationsSkeleton />
       ) : notifications.length === 0 ? (
         <EmptyState title="No Notifications" description="You're all caught up! No recent alerts or notifications." />
       ) : (

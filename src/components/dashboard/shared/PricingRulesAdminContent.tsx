@@ -6,8 +6,8 @@ import { roomTypesApi, RoomType } from "@/lib/api/roomTypes";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
+import { PricingRulesSkeleton } from "@/components/dashboard/skeletons";
 import { Plus, Edit2, Trash2, CircleDollarSign } from "lucide-react";
 
 export function PricingRulesAdminContent() {
@@ -122,7 +122,7 @@ export function PricingRulesAdminContent() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading pricing rules..." />
+        <PricingRulesSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

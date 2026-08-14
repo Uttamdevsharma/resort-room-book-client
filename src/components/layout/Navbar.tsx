@@ -7,6 +7,8 @@ import { Menu, X, Sun, Moon, Bell, User, LogOut, LayoutDashboard, CreditCard, Ch
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/context/AuthContext";
 import { notificationsApi } from "@/lib/api/notifications";
+import { LogoMark } from "@/components/brand/LogoMark";
+import { Wordmark } from "@/components/brand/Wordmark";
 
 export function Navbar() {
   const { user, isAuthenticated, isStaff, logout } = useAuth();
@@ -105,17 +107,17 @@ export function Navbar() {
         <nav className="container flex h-14 items-center justify-between gap-4">
           <Link
             href="/"
-            className="group flex items-center gap-2 text-xl font-extrabold tracking-tight text-foreground cursor-pointer"
-            aria-label="ResortStay - Home"
+            className="group flex items-center gap-2 cursor-pointer"
+            aria-label="CoxBay Resort - Home"
           >
             <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm transition-all duration-300 group-hover:shadow-md group-hover:bg-primary-hover group-hover:scale-105 group-active:scale-95">
-              <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-              </svg>
+              <LogoMark className="h-5 w-5" />
             </div>
-            <span className={`transition-opacity duration-300 group-hover:opacity-80 ${isOverHero ? "text-white" : "bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent"}`}>
-              ResortStay
-            </span>
+            <Wordmark
+              tone={isOverHero ? "light" : "gradient"}
+              size="md"
+              className="transition-opacity duration-300 group-hover:opacity-80"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -271,7 +273,7 @@ export function Navbar() {
                 </Button>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5">
+              <div className="hidden md:flex items-center gap-1.5">
                 <Link href="/login">
                   <Button variant="ghost" size="sm" className={isOverHero ? "text-white hover:bg-white/10" : ""}>
                     Sign In
@@ -325,6 +327,25 @@ export function Navbar() {
                 </Link>
               );
             })}
+
+            {!isAuthenticated && (
+              <div className="pt-2 mt-2 space-y-2 border-t border-border">
+                <Link
+                  href="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-lg text-base font-medium border border-border text-foreground hover:bg-muted hover:border-border-hover cursor-pointer transition-all duration-200 ease-in-out active:scale-[0.98]"
+                >
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-lg text-base font-semibold bg-primary text-white hover:bg-primary-hover shadow-md cursor-pointer transition-all duration-200 ease-in-out active:scale-[0.98]"
+                >
+                  <span>Register</span>
+                </Link>
+              </div>
+            )}
 
             {isAuthenticated && (
               <>

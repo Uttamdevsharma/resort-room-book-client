@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { paymentsApi, PaymentRecord } from "@/lib/api/payments";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
 import { Pagination } from "@/components/ui/Pagination";
+import { PaymentsSkeleton } from "@/components/dashboard/skeletons";
 import { CreditCard } from "lucide-react";
 import { ProtectedRoute } from "@/components/dashboard/ProtectedRoute";
 
@@ -41,7 +41,7 @@ export function PaymentsAdminContent() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading payments ledger..." />
+        <PaymentsSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

@@ -91,7 +91,7 @@ export function AboutSection() {
 
             <Reveal delay={200}>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Tucked between swaying palms and the endless blue, ResortStay is a
+                Tucked between swaying palms and the endless blue, CoxBay Resort is a
                 boutique coastal haven built for slow mornings and unhurried evenings.
                 Think soft linen, warm wood, and salt on the air — quiet luxury living
                 in every small detail.

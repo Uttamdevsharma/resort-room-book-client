@@ -27,9 +27,9 @@ import { Facility } from "@/lib/api/facilities";
  * ------------------------------------------------------------------------- */
 export const FACILITY_IMAGES: Record<string, string> = {
   pool: "/facilities/pool.avif",
-  spa: "/facilities/spa.jfif",
+  spa: "/facilities/spa.jpg",
   dining: "/facilities/dining.jpg",
-  fitness: "/facilities/fitness.jfif",
+  fitness: "/facilities/fitness.jpg",
   beach: "/facilities/beatch.jfif",
   kids: "/facilities/kidszone.jfif",
 };

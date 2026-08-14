@@ -7,8 +7,8 @@ import { roomTypesApi, RoomType, RoomTypeMedia, normalizeMedia } from "@/lib/api
 import { useAuth } from "@/lib/context/AuthContext";
 import { Badge } from "@/components/ui/Badge";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { Button } from "@/components/ui/Button";
+import { RoomTypesSkeleton } from "@/components/dashboard/skeletons";
 import {
   Plus,
   Edit2,
@@ -350,7 +350,7 @@ export function RoomTypesAdminContent() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading room types..." />
+        <RoomTypesSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

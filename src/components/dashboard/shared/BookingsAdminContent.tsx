@@ -5,8 +5,8 @@ import { bookingsApi, Booking } from "@/lib/api/bookings";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import { Loading } from "@/components/ui/Loading";
 import { Pagination } from "@/components/ui/Pagination";
+import { BookingsSkeleton } from "@/components/dashboard/skeletons";
 import { Search, CalendarCheck, CheckCircle2, LogOut, XCircle } from "lucide-react";
 
 export function BookingsAdminContent() {
@@ -89,7 +89,7 @@ export function BookingsAdminContent() {
       </form>
 
       {isLoading ? (
-        <Loading text="Loading bookings database..." />
+        <BookingsSkeleton />
       ) : (
         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-xs">
           <div className="overflow-x-auto">

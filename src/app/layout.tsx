@@ -22,35 +22,35 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "ResortStay - Luxury Resort Room Reservations",
-    template: "%s | ResortStay",
+    default: "CoxBay Resort - Luxury Room Reservations",
+    template: "%s | CoxBay Resort",
   },
-  description: "Book your perfect getaway at our luxury resorts. Discover premium accommodations, exceptional service, and unforgettable experiences.",
+  description: "Book your perfect getaway at CoxBay Resort. Discover premium accommodations, exceptional service, and unforgettable experiences.",
   keywords: ["resort", "hotel", "booking", "reservation", "luxury", "travel", "vacation"],
-  authors: [{ name: "ResortStay" }],
-  creator: "ResortStay",
-  publisher: "ResortStay",
+  authors: [{ name: "CoxBay Resort" }],
+  creator: "CoxBay Resort",
+  publisher: "CoxBay Resort",
   robots: "index, follow",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://resortstay.com",
-    siteName: "ResortStay",
-    title: "ResortStay - Luxury Resort Room Reservations",
-    description: "Book your perfect getaway at our luxury resorts.",
+    url: "https://coxbayresort.com",
+    siteName: "CoxBay Resort",
+    title: "CoxBay Resort - Luxury Room Reservations",
+    description: "Book your perfect getaway at CoxBay Resort.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "ResortStay - Luxury Resort Room Reservations",
+        alt: "CoxBay Resort - Luxury Room Reservations",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ResortStay - Luxury Resort Room Reservations",
-    description: "Book your perfect getaway at our luxury resorts.",
+    title: "CoxBay Resort - Luxury Room Reservations",
+    description: "Book your perfect getaway at CoxBay Resort.",
     images: ["/og-image.jpg"],
   },
   verification: {

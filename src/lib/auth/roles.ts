@@ -16,7 +16,7 @@ export const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   CUSTOMER_SUPPORT: "/customer-support/dashboard",
   MARKETING_MANAGER: "/marketing-manager/dashboard",
   FINANCE: "/finance/dashboard",
-  CUSTOMER: "/customer/dashboard",
+  CUSTOMER: "/customer/bookings",
 };
 
 export function getDefaultDashboardPath(roles: string[]): string {
@@ -25,7 +25,7 @@ export function getDefaultDashboardPath(roles: string[]): string {
       return ROLE_DASHBOARD_PATHS[role];
     }
   }
-  return "/customer/dashboard";
+  return "/customer/bookings";
 }
 
 export function isStaffUser(roles: string[]): boolean {

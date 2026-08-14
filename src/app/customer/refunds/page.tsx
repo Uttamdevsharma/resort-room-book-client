@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { refundsApi, RefundRecord } from "@/lib/api/refunds";
 import { Badge, getStatusBadgeVariant } from "@/components/ui/Badge";
-import { Loading } from "@/components/ui/Loading";
+import { RefundsSkeleton } from "@/components/dashboard/shared/CustomerSkeletons";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Receipt } from "lucide-react";
 
@@ -33,7 +33,7 @@ export default function CustomerRefundsPage() {
       </div>
 
       {isLoading ? (
-        <Loading text="Loading refund logs..." />
+        <RefundsSkeleton />
       ) : refunds.length === 0 ? (
         <EmptyState title="No Refund Records" description="You have no recorded refund transactions." />
       ) : (
